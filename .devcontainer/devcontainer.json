@@ -1,0 +1,15 @@
+{
+  "name": "Graftwork Stock",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    // mise installs the toolchain from mise.toml, so the container and the
+    // local fast path resolve to identical pinned versions.
+    "ghcr.io/jdx/mise/devcontainer-feature/mise:1": {}
+  },
+  "postCreateCommand": "mise trust && mise install && uv sync",
+  "customizations": {
+    "vscode": {
+      "extensions": ["charliermarsh.ruff", "ms-python.python"]
+    }
+  }
+}

@@ -1,0 +1,52 @@
+[project]
+name = "graftwork-stock"
+version = "0.3.0"
+description = "The rootstock for new projects — a versioned foundation you graft new work onto."
+requires-python = ">=3.13"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "ruff>=0.9",
+]
+
+[tool.graftwork.traceability]
+# Scenarios deliberately left unclaimed by any test. A reason is mandatory, and
+# the guard checks these entries the same way it checks everything else — see
+# docs/decisions/stock-0005-declared-gaps-in-traceability.md.
+unclaimed = [
+    { scenario = "foundation/a-pull-request-carrying-ai-generated-code-names-the-agent-and-model", reason = "review policy; the suite cannot observe a pull request" },
+    { scenario = "foundation/personal-detail-supplied-as-context-stays-out-of-the-artifacts", reason = "review policy; no test can read a requirement and tell whether a named correspondent is a category or a real person" },
+    { scenario = "foundation/a-load-bearing-specific-is-confirmed-before-it-is-written-down", reason = "review policy; the confirmation happens in conversation, which the suite cannot observe" },
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+# --strict-markers turns a typo'd marker into an error rather than a silent
+# no-op, which is what makes the spec link trustworthy.
+addopts = [
+    "--strict-markers",
+    "--cov",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+]
+markers = [
+    "spec(scenario_id): link this test to an OpenSpec scenario, e.g. spec(\"foundation/green-from-commit-one\")",
+]
+
+[tool.coverage.run]
+source = ["scripts"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

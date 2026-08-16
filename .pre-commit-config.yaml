@@ -1,0 +1,39 @@
+# Run with: uvx pre-commit run --all-files
+# Install the git hook with: uvx pre-commit install
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.0
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  # Credentials are the half of "context is not content" a machine can catch.
+  # The other half — a person's name, condition, or address in a requirement —
+  # is a review policy, declared as a gap in pyproject.toml. No baseline file:
+  # the repo passes clean without one, and a project adds it the day it gets its
+  # first false positive. See openspec/specs/foundation/spec.md.
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+
+  - repo: local
+    hooks:
+      # The review-layer contract, enforced before a commit rather than after.
+      - id: spec-traceability
+        name: every spec scenario is claimed by a test
+        entry: python scripts/check_spec_traceability.py
+        language: system
+        pass_filenames: false
+        files: ^(openspec/specs/|tests/)
