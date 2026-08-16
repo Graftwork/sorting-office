@@ -1,0 +1,38 @@
+schema: spec-driven
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+# Example:
+#   context: |
+#     Tech stack: TypeScript, React, Node.js
+#     We use conventional commits
+#     Domain: e-commerce platform
+
+context: |
+  Graftwork Stock is a foundation ("rootstock") repo. Projects are grafted from
+  it and re-synced as it improves, so every change here is a migration for
+  projects that already exist.
+
+  Ways of working: WORKFLOW.md. Release process: docs/RELEASING.md.
+  Human-gated checks: docs/UAT.md. Deliberate choices: docs/decisions/.
+
+  Every spec scenario must be claimed by a test via
+  @pytest.mark.spec("<capability>/<slugified-scenario-title>"), or declared as a
+  gap with a written reason in [tool.graftwork.traceability] in pyproject.toml.
+
+rules:
+  proposal:
+    # The tool cannot model "supersedes", so the reasoning has to be carried by
+    # hand. See WORKFLOW.md, "Transcribe learnings forward".
+    - When this change replaces or supersedes an abandoned one, add a
+      "## Background" section carrying forward why the previous attempt failed —
+      written in the imperative, addressed to whoever tries next. Name the
+      change it supersedes; the tool cannot record that relationship.
+    - State the provenance of any load-bearing number - measured (name the
+      command), derived (show it), or recalled (say so).
+  tasks:
+    # See docs/UAT.md and Stock ADR 0006.
+    - If the change produces output a test cannot fully judge, include a task to
+      regenerate the artifacts and look at them, ordered before the archive step
+      and before any PR.

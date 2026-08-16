@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(uv sync)",
+      "Bash(uv sync --locked)",
+      "Bash(uvx pre-commit:*)",
+      "Bash(npx --yes @fission-ai/openspec@1.6.0:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(uv run pytest)",
+      "Bash(uv run pytest *)",
+      "Bash(uv run ruff check .)",
+      "Bash(uv run ruff format --check .)",
+      "Bash(uv run python scripts/check_spec_traceability.py)",
+      "Bash(mise run check)",
+      "Bash(mise run test)",
+      "Bash(mise run lint)",
+      "Bash(mise run trace)",
+      "Bash(uvx pre-commit run --all-files)",
+      "Bash(npx --yes @fission-ai/openspec@1.6.0 status *)",
+      "Bash(npx --yes @fission-ai/openspec@1.6.0 validate *)",
+      "Bash(npx --yes @fission-ai/openspec@1.6.0 list *)",
+      "Bash(npx --yes @fission-ai/openspec@1.6.0 show *)",
+      "Bash(npx --yes @fission-ai/openspec@1.6.0 instructions *)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
+  }
+}

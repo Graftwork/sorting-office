@@ -1,0 +1,41 @@
+# Graftwork Stock — pinned toolchain.
+# Every version here is explicit so a stamped project behaves the same on any
+# machine and in CI. See docs/decisions/stock-0001-why-mise.md.
+
+[tools]
+python = "3.13"
+uv = "0.11.16"
+node = "26"
+
+[env]
+# OpenSpec is run through npx at a pinned version rather than installed as a
+# dependency. See docs/decisions/stock-0002-why-openspec-via-npx.md.
+OPENSPEC_VERSION = "1.6.0"
+
+[tasks.install]
+description = "Install the Python dev dependencies"
+run = "uv sync"
+
+[tasks.lint]
+description = "Lint and format-check"
+run = ["uv run ruff check .", "uv run ruff format --check ."]
+
+[tasks.format]
+description = "Auto-format the codebase"
+run = ["uv run ruff format .", "uv run ruff check --fix ."]
+
+[tasks.test]
+description = "Run the test suite with coverage"
+run = "uv run pytest"
+
+[tasks.trace]
+description = "Check every spec scenario is claimed by a test"
+run = "uv run python scripts/check_spec_traceability.py"
+
+[tasks.openspec]
+description = "Run the pinned OpenSpec CLI (e.g. mise run openspec -- list)"
+run = "npx --yes @fission-ai/openspec@$OPENSPEC_VERSION"
+
+[tasks.check]
+description = "Everything CI runs, in one command"
+depends = ["lint", "test"]
