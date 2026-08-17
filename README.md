@@ -135,7 +135,14 @@ Then:
    promises stay true of the grafted project — the suite asserts at least one
    scenario exists, so removing it turns a fresh stamp red. Your capabilities go
    alongside it.
-2. **Keep `WORKFLOW.md` and `docs/decisions/`.** The ways of working and the
+2. **Remove `openspec/changes/`.** Its backlog stubs and archived changes are
+   Stock's own working state, not yours — carrying them across means
+   `openspec list` shows Stock's TODOs as if they belonged to your project, and
+   `CLAUDE.md`'s "don't open a second change over the same ground" rule then
+   treats a stale Stock stub as ground you've already covered. `rm -rf
+   openspec/changes` is enough; `openspec new change` recreates the directory
+   (and `archive/`) the first time you use it.
+3. **Keep `WORKFLOW.md` and `docs/decisions/`.** The ways of working and the
    foundation's rationale travel with the graft. Stock's ADRs are the
    `stock-NNNN-*.md` files — leave them named as they are and never renumber
    them; **your own ADRs start at `0001`**, so the two sequences can't collide
@@ -143,10 +150,10 @@ Then:
    ([Stock ADR 0008](docs/decisions/stock-0008-adr-numbering.md)). Keep
    `docs/RELEASING.md` too, and replace its specifics — most projects can drop
    the re-sync step and keep the rest.
-3. Rewrite `README.md`, `CHANGELOG.md`, and the "what this repo is" section of
+4. Rewrite `README.md`, `CHANGELOG.md`, and the "what this repo is" section of
    `CLAUDE.md` for the new project. Replace Stock's cases in `docs/UAT.md` with
    the project's own — keep the file and the case format.
-4. Set `name` and `description` in `pyproject.toml`, and record the graft:
+5. Set `name` and `description` in `pyproject.toml`, and record the graft:
 
    ```toml
    [tool.graftwork]
@@ -154,7 +161,7 @@ Then:
    grafted = "YYYY-MM-DD"
    ```
 
-5. Run `mise trust && mise install && uv sync && mise run check` — it should be
+6. Run `mise trust && mise install && uv sync && mise run check` — it should be
    green before you write a line of your own code.
 
 To re-sync later, read this CHANGELOG forward from the recorded `stock-version`,
