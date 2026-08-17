@@ -83,9 +83,14 @@ The one check that runs **before the commit**. See
   to understand why a detail is harmless, a stranger reading the public
   repository does not have it.
 
-- **Last agent run:** 2026-08-17 — read the full staged diff. Found one carried
-  ADR naming a product the owner uses and abstracted it; found two more in code
-  not yet staged, flagged for when it lands. Neither was noticed by any grep.
+- **Last agent run:** 2026-08-17 (twice). First pass, on the identity-only
+  change: found and abstracted an ADR naming a product the owner uses; flagged
+  two placeholder addresses in unstaged code for when it landed. Second pass, on
+  this change: those two addresses were replaced with the owner's own fictional
+  choices, then this same read caught three *stale* ADR cross-references the
+  renumbering script had missed, because it only ran against `openspec/changes/`
+  and not `sorting_office/*.py`. Fixed before staging. No personal or
+  identifying detail found either time; both misses were process, not privacy.
 - **Last passed:** never
 
 ### 3. No mail provider is named, and every address is obviously invented
@@ -103,9 +108,9 @@ where the judgement lives.
   ([ADR 0009](decisions/0009-provider-agnostic-collection.md)), and every address
   on the `sorting-office.test` domain or similarly unmistakable. The judgement: could
   any of these be real? A grep cannot tell you.
-- **Last agent run:** 2026-08-17 — no provider named, and no email address of any
-  kind in the tree yet, since the code that carries the fixture addresses has not
-  landed.
+- **Last agent run:** 2026-08-17 — no provider named. Every address in the tree
+  is on `sorting-office.test`, including `parcels-weekly@` and `stamp-exchange@`
+  — the owner's own choices for the retention-behaviour fixtures.
 - **Last passed:** never
 
 ### 4. A declared gap reads as a decision, not an oversight
@@ -115,9 +120,10 @@ where the judgement lives.
 - **Expect:** the summary line accounts for the gaps (`…, 3 allowed without
   one`), and every declared reason still holds today. A reason that has quietly
   stopped being true is exactly what this case exists to catch.
-- **Last agent run:** 2026-08-17 — `9/12 scenarios claimed by tests, 3 allowed
-  without one`. All three gaps are inherited from Stock and unexamined by this
-  project; whether they hold here is exactly the judgement this case wants.
+- **Last agent run:** 2026-08-17 — `34/37 scenarios claimed by tests, 3 allowed
+  without one`. `walks` and `retention` now claim 25 scenarios between them; the
+  three gaps are still the ones inherited from Stock, unexamined by this
+  project. Whether they hold here is exactly the judgement this case wants.
 - **Last passed:** never
 
 ---

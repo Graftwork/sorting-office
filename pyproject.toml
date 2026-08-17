@@ -47,7 +47,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["scripts"]
+source = ["scripts", "sorting_office"]
 branch = true
 
 [tool.coverage.report]
