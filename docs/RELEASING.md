@@ -120,12 +120,59 @@ for the person running UAT, not for anyone starting a project.
 ### 8. Run the tag-dependent UAT cases against the candidate
 
 Clone the rc tag and work the cases marked *needs a published tag*. This is the step that
-was, until now, impossible to do before releasing.
+was, until now, impossible to do before releasing. A real graft attempted from
+the candidate — by a person or an agent, not necessarily as a formal UAT run —
+counts as this step too; a bug it finds is exactly what the step exists to catch.
 
 - **All good** → go to step 9.
 - **Something is wrong** → fix it on a new branch, merge, and cut `-rc.2`. The rc
   tags stay in the repository as an honest record of what was tried; they cost
   nothing and deleting them would only obscure the history.
+
+  **The fix belongs to *this* version, not the next one.** Amend the existing
+  `[X.Y.Z]` CHANGELOG entry rather than opening a new `[Unreleased]` section —
+  the entry describes what the release will contain once a candidate finally
+  passes, and this release does not yet exist to have shipped without the fix.
+  `pyproject.toml` stays at the version being released; only the tag suffix
+  changes, `-rc.1` to `-rc.2`.
+
+  This is easy to get backwards. A defect a candidate's own UAT surfaces is not
+  the same thing as unrelated new work that happens to land while a candidate
+  is outstanding — only the second kind is genuinely `[Unreleased]`:
+
+  | | Defect UAT found in the candidate | Independent new work |
+  | --- | --- | --- |
+  | Belongs to | This version — merge, `-rc.2` | The next version |
+  | CHANGELOG | Amend the existing `[X.Y.Z]` entry | New `[Unreleased]` section |
+
+  Confusing the two means the version that eventually ships may never have
+  actually been tested — the failure this whole step exists to prevent.
+
+```mermaid
+flowchart LR
+    subgraph S["Graftwork/stock — one continuous git history"]
+        A["merge to main"] --> B["tag vX.Y.Z-rc.1<br/>candidate, no promise yet"]
+        B -->|"fix: a defect<br/>this candidate's UAT found"| C["tag vX.Y.Z-rc.2"]
+        C --> D["tag vX.Y.Z<br/>stable — grafts clone this"]
+        C -.->|"independent work,<br/>unrelated to this candidate"| E["Unreleased —<br/>joins the next version"]
+    end
+
+    subgraph G["a grafted project — a new, separate history"]
+        F["cloned at the tag"] --> H["built and used for real"] --> I["a defect surfaces"]
+    end
+
+    B -.->|"clone --branch vX.Y.Z-rc.1<br/>then rm -rf .git — a copy, not a link"| F
+    I ==>|"reported back as<br/>a defect in the candidate"| B
+
+    classDef accent fill:#1e6e63,stroke:#1e6e63,color:#fff
+    class I,C accent
+```
+
+Stock and a grafted project are separate git histories from the moment of the
+clone — nothing flows back on its own. A finding from a graft returns only as a
+manual report, and this step is the fork in what happens to it: the highlighted
+path is a defect in the exact candidate under test, folded back into the same
+release; the plain path is everything else, which waits for the next one.
 
 Record `Last agent run` for what was executed; **`Last passed` stays for the
 person who looked.**

@@ -11,6 +11,27 @@ re-sync, and a **minor** bump means the migration is additive.
 
 ## [0.3.0] — 2026-08-16
 
+**Amended, not yet released.** `v0.3.0-rc.1` failed UAT case 5 — the first real
+graft attempted under it found the bug below — so per
+[`RELEASING.md` step 8](docs/RELEASING.md#8-run-the-tag-dependent-uat-cases-against-the-candidate)
+the fix is folded into this same entry rather than filed separately, and the
+next tag is `v0.3.0-rc.2`, not a release. Nothing here is final until a
+candidate passes.
+
+### Fixed
+
+- **The graft instructions said nothing about `openspec/changes/`.** Stock's
+  own backlog stubs and archived changes came across into the grafted project
+  by default, because step 1 covers `openspec/specs/` and is silent on
+  `openspec/changes/`. Left in place, an agent reading `openspec list` in the
+  grafted project sees Stock's TODOs as if they were its own, and
+  `CLAUDE.md`'s "don't open a second change over the same ground" rule then
+  treats a stale Stock stub as ground already covered — actively steering the
+  agent away from real work, not just leaving noise behind. The graft steps
+  now have a step 2: remove `openspec/changes/`; `openspec new change`
+  recreates it (and `archive/`) the first time it's needed, verified against
+  the pinned CLI rather than assumed.
+
 **Context is not content.** Learned the expensive way: the first project grafted
 from Stock was torn down and rebuilt because personal detail supplied while
 scoping the work had been written into a spec, then into code, then pushed. By
