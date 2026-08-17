@@ -112,7 +112,18 @@ Stock's CHANGELOG is a list of migrations waiting to happen here. Read it forwar
 from the `stock-version` recorded in `pyproject.toml`, apply each entry as its own
 small PR, and bump the recorded version when they are all in.
 
-This project currently sits on a **release candidate**, `v0.3.0-rc.1`, which is
-deliberate: it was rebuilt onto the candidate so that the candidate could be
+This project currently sits on a **release candidate**, `v0.3.0-rc.2`, which is
+deliberate: it was rebuilt onto `v0.3.0-rc.1` so that the candidate could be
 tested by something real before Stock cuts the stable tag. Move to `v0.3.0` when
 it ships, and expect that to be a no-op if the candidate was any good.
+
+It already worked once. This project's own graft was the "something real" that
+found the bug behind `v0.3.0-rc.2` — Stock's own graft steps said nothing about
+`openspec/changes/`, so its backlog stubs travelled across by default. The
+re-sync from rc.1 to rc.2 was close to a no-op in substance: a version bump and
+a credit line, because the fix itself had already been applied here by hand
+before Stock formalized it. The mechanics of *doing* the re-sync mid-flight —
+nothing merged yet, one branch carrying all the project's own rewrites — are
+their own small piece of process, kept as
+[a skill](.claude/skills/resync-in-flight-graft/SKILL.md) rather than worked out
+fresh next time.

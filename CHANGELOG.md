@@ -24,6 +24,25 @@ What each version number will mean for this project — and why it is 0.0.0 toda
 - `docs/UAT.md` and `docs/RELEASING.md` rewritten for this project, replacing
   Stock's own cases and release sequence while keeping both formats.
 
+### Changed
+
+- **Re-synced to Stock `v0.3.0-rc.2`.** Stock's own fix for exactly the bug
+  this project found by hand during the original graft: the graft steps said
+  nothing about `openspec/changes/`, so Stock's backlog stubs and archived
+  changes travelled across by default. This project had already removed them
+  before Stock's fix existed; the re-sync is a credit and a version bump, not
+  new work — `stock-version` in `pyproject.toml` now reads `0.3.0-rc.2`, with
+  a `resynced` date alongside `grafted` so the two stay distinguishable.
+  `main` was updated first, by applying Stock's own diff directly and
+  checking the result was tree-identical to the `v0.3.0-rc.2` tag, the same
+  verification the original graft used; the project branch then merged that
+  and resolved conflicts by keeping this project's own rewritten docs, since
+  none of Stock's specific text in this diff was about anything but Stock's
+  own release process. First real use of
+  [the resync-in-flight-graft skill](.claude/skills/resync-in-flight-graft/SKILL.md),
+  written from doing this once so the next Stock update doesn't start from
+  nothing.
+
 ### Notes
 
 - **This repository was rebuilt.** An earlier version of it was retired because
