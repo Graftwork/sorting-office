@@ -1,10 +1,39 @@
 # Releasing
 
 [`WORKFLOW.md`](../WORKFLOW.md) is how a change is *run*. This is how a change
-gets *out* — the sequence from branch to tag to the projects that need it.
+gets *out*.
 
-Stock's own process is below. A grafted project needs its own; keep this file,
-replace the specifics. Most projects can drop the re-sync step and keep the rest.
+Grafted from Stock's own release process, with the specifics replaced. Stock
+releases a foundation that other projects graft from, so its versions are
+migration instructions for someone else. This project releases nothing to anyone
+— which changes what a version number is *for*, and that is the first section.
+
+## What a version means here
+
+Nothing installs this project, so a version number here is not a package
+coordinate. It is a **claim about how much of the promise actually works**, and
+it exists so that "are we nearly there?" has an answer that isn't a feeling.
+
+| Version | What is true when it is reached |
+| --- | --- |
+| **0.0.x** | Decisions recorded, foundation green. Nothing runs end to end. **Here today.** |
+| **0.1.0** | One end-to-end run against a real postbox, in dry run, reporting what it *would* do. Nothing has been relayed or cleared. |
+| **0.2.0** | Collection relays into the local mailbox and clears the postbox, unattended, with the relay-before-clear ordering proven. |
+| **0.3.0** | Retention carries its plans out — mail moves to Trash on a schedule, and the reports at the Counter are unsurprising. |
+| **1.0.0** | It has run unattended for a sustained stretch — a month is the working figure — without a surprise, and mail is being pruned without anyone watching it. |
+
+Two things follow from that table:
+
+- **1.0.0 is a long way off, and saying so is the point.** Naming a change "v1"
+  before any of it runs claims a maturity that does not exist, and the claim
+  outlives the enthusiasm that produced it. Changes are named for what they do.
+- **The milestones are about trust, not features.** Every step from 0.1.0 onward
+  is "something irreversible became reachable, and was proven first". That is the
+  same ordering the task list uses, for the same reason.
+
+Within 0.0.x, patch bumps are not worth the ceremony. The CHANGELOG's
+`[Unreleased]` section carries everything until the first milestone is genuinely
+reached.
 
 ## Which route a change takes
 
@@ -12,21 +41,11 @@ Not every change earns the full ceremony. The test is what it touches.
 
 | The change touches | Route |
 | --- | --- |
-| `openspec/specs/`, `scripts/`, or `tests/` | **Full OpenSpec change** — propose, apply, UAT, archive. Main specs are written by archiving, never by hand. |
-| Docs, CI, `mise.toml`, `.pre-commit-config.yaml`, permissions | **Direct** — branch, commit, PR. The CHANGELOG entry is the record. |
-
-The split is deliberate: the verification layer is the thing Stock exists to
-provide, so changes to it go through the flow Stock ships. A CI action bump does
-not need a design document.
+| `openspec/specs/`, `scripts/`, or `sorting_office/` and its tests | **Full OpenSpec change** — propose, apply, UAT, archive. Main specs are written by archiving, never by hand. |
+| Docs, ADRs, CI, `mise.toml`, `.pre-commit-config.yaml`, permissions | **Direct** — branch, commit, PR. The CHANGELOG entry is the record. |
 
 If you are unsure, ask whether the change alters a promise. Promises go through
 OpenSpec.
-
-**Cutover:** this rule starts at v0.2.0 and is not applied backwards. v0.2.0
-itself edited `openspec/specs/foundation/spec.md` directly, because it is the
-change that introduced the rule — it could not have followed it. Retrofitting an
-archived change for it would be a fabricated record, which is worse than an
-honest gap. Everything after v0.2.0 follows the table.
 
 ## The sequence
 
@@ -36,9 +55,8 @@ honest gap. Everything after v0.2.0 follows the table.
 git fetch origin main && git checkout -b <topic> origin/main
 ```
 
-Never commit to `main` directly. Up to and including v0.1.2 that is exactly what
-happened — `main` is a linear run of direct commits with no merges — and the
-practice stops here.
+Never commit to `main` directly. The single exception is the root commit — the
+pristine graft — which had no branch to come from.
 
 ### 2. Run the change
 
@@ -52,118 +70,49 @@ mise run check          # lint + test, everything CI runs
 uvx pre-commit run --all-files
 ```
 
-### 4. Run UAT — before the PR, not after
+### 4. Run UAT — case 4 before the *commit*, the rest before the PR
 
-Work [`docs/UAT.md`](UAT.md), run the cases you can, and record what you saw.
-Cases marked *needs a published tag* cannot run yet; leave them for step 8. Reporting a case as open
-is the correct outcome — an agent may run the commands and report, but may not
-mark a case passed.
+Work [`docs/UAT.md`](UAT.md) and record what you saw. Case 4 — *the artifacts
+read clean to a stranger* — is different from the others: it runs before the
+commit, because that is the crossing that matters. Everything after the commit is
+a rewrite rather than an edit.
 
-### 5. Decide the version and write the CHANGELOG entry
+An agent may run the commands and write `Last agent run`. Only a person writes
+`Last passed`.
 
-The rule is stated in [`CHANGELOG.md`](../CHANGELOG.md) and repeated here because
-it is the decision most often got wrong:
+### 5. Write the CHANGELOG entry
 
-- **major** — a grafted project needs manual intervention to re-sync
-- **minor** — the migration is additive; a project that adopts none of it stays green
-- **patch** — a fix that changes no interface
-
-The entry is not release notes. **It is the migration instruction** for every
-already-grafted project, and it is the only thing standing between "re-sync to
-Stock vX" and an archaeology exercise. Write it for someone holding a project
-three versions behind.
-
-Bump the version everywhere it appears, and **only where it tracks the current
-version**. Measured at v0.2.0: 13 occurrences across 6 files, of which 5 must
-move and the rest are permanent statements about the past — a blanket
-find-and-replace corrupts the record while looking correct. The breakdown is in
-the backlog stub at `openspec/changes/version-string-consistency/`. Until that is
-built, this step is manual and easy to get wrong in both directions:
-
-```bash
-grep -rn "$OLD_VERSION" --include="*.md" --include="*.toml" .
-```
+Not release notes — the record of what changed and why, for a reader who was not
+in the room. Reach a milestone from the table above and the version moves with
+it; otherwise it stays in `[Unreleased]`.
 
 ### 6. Open the PR
 
-Disclose the coding agent and the model. This is not etiquette — it is a
-published requirement of the `foundation` spec (*AI Authorship Is Disclosed*),
-and it is declared as a review-policy gap in `[tool.graftwork.traceability]`
-precisely because no test can enforce it. The only thing keeping it true is
-someone doing it.
+Disclose the coding agent and the model. This is a published requirement of the
+`foundation` spec (*AI Authorship Is Disclosed*), declared as a review-policy gap
+in `[tool.graftwork.traceability]` precisely because no test can enforce it.
 
-### 7. Merge, then cut a release candidate
+### 7. Merge, and tag if a milestone was reached
 
 ```bash
 git checkout main && git pull origin main
-git tag -a v<X.Y.Z>-rc.1 -m "v<X.Y.Z>-rc.1"
-git push origin v<X.Y.Z>-rc.1
-```
-
-**Not the final tag yet.** Some UAT cases need a real published tag to run
-against — you cannot rehearse "clone Stock at a tag and graft a project from it"
-without a tag to clone. Cutting the stable tag first would mean the release is
-already made by the time you find out whether it is any good, and a stable tag
-that turns out to be wrong cannot be moved: someone may already have grafted from
-it, and the whole point of a tag is that it does not move.
-
-A release candidate breaks that circle. It is a real, cloneable tag, so the graft
-UAT is the genuine article rather than a rehearsal — but it carries no promise,
-so nothing is committed to.
-
-Semver orders pre-releases before the release they precede, so `v0.3.0-rc.1` sorts
-below `v0.3.0` and never gets mistaken for it.
-
-The `README.md` graft snippet keeps naming the **stable** tag throughout. An rc is
-for the person running UAT, not for anyone starting a project.
-
-### 8. Run the tag-dependent UAT cases against the candidate
-
-Clone the rc tag and work the cases marked *needs a published tag*. This is the step that
-was, until now, impossible to do before releasing.
-
-- **All good** → go to step 9.
-- **Something is wrong** → fix it on a new branch, merge, and cut `-rc.2`. The rc
-  tags stay in the repository as an honest record of what was tried; they cost
-  nothing and deleting them would only obscure the history.
-
-Record `Last agent run` for what was executed; **`Last passed` stays for the
-person who looked.**
-
-### 9. Tag the release
-
-```bash
-git tag -a v<X.Y.Z> -m "v<X.Y.Z>" <the same commit the passing rc points at>
+git tag -a v<X.Y.Z> -m "v<X.Y.Z>"
 git push origin v<X.Y.Z>
 ```
 
-Tag on `main`, never on a branch, and on **the exact commit the passing candidate
-pointed at** — otherwise you have released something no one ran UAT against, and
-the candidate proved nothing.
+Stock cuts a release candidate first, because its UAT includes cases that need a
+published tag to run against — you cannot rehearse grafting from a tag without
+one. **This project has no such case**, since nothing grafts from it, so the
+candidate step is dropped rather than performed emptily. Add it back the day a
+UAT case here genuinely needs a tag.
 
-The tag is what
-[the graft instructions](../README.md#grafting-a-project-from-stock) clone, so a
-missing or misplaced tag breaks new projects rather than existing ones — a
-failure nobody already in the repository will ever notice.
+### 8. Re-sync from Stock when it releases
 
-### 10. Push the migration outward
+Stock's CHANGELOG is a list of migrations waiting to happen here. Read it forward
+from the `stock-version` recorded in `pyproject.toml`, apply each entry as its own
+small PR, and bump the recorded version when they are all in.
 
-Every entry in the CHANGELOG is work waiting to happen in every grafted project.
-Read each project's recorded `stock-version` in its `pyproject.toml`, read this
-CHANGELOG forward from there, and open one small PR per entry.
-
-**There are currently no live grafts.** The first one was retired before v0.2.0
-shipped, so this step has nothing to do yet — which is also why
-[Stock ADR 0008](decisions/stock-0008-adr-numbering.md) could renumber Stock's
-own ADRs at no cost to anyone.
-
-Keep the list of grafts here as they appear, and record which Stock version each
-one has reached. Nothing tracks whether a migration has landed; if that becomes a
-problem before someone builds something better, the honest fix is a checklist in
-the CHANGELOG entry itself.
-
-## Why it is worth this much
-
-A change to Stock is not a change to one repo. It is a change to every project
-grafted from it, arriving later, applied by someone who was not in the room. The
-CHANGELOG entry and the tag are the entire interface for that person.
+This project currently sits on a **release candidate**, `v0.3.0-rc.1`, which is
+deliberate: it was rebuilt onto the candidate so that the candidate could be
+tested by something real before Stock cuts the stable tag. Move to `v0.3.0` when
+it ships, and expect that to be a no-op if the candidate was any good.

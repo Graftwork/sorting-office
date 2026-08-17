@@ -9,13 +9,10 @@ stale while the suite stays green.
 The archive is one-way, and a PR is the wrong place to discover the concept was
 wrong. See [Ways of working](../WORKFLOW.md#uat-is-a-gate-and-it-comes-before-the-pr).
 
-The one exception is a case marked **needs a published tag**, which verifies the
-release itself and so cannot run until a tag exists. Those run against a release
-**candidate** — `vX.Y.Z-rc.N` — at
-[step 8 of the release sequence](RELEASING.md#8-run-the-tag-dependent-uat-cases-against-the-candidate),
-which is what lets them happen before the release rather than after it. A case
-earns this marking only if it genuinely cannot be checked earlier; it is not a
-way to defer an awkward case past the gate.
+**Case 4 is the exception and runs before the *commit*.** Everything after the
+commit is a rewrite rather than an edit, so a check that runs later is worth
+nothing. This project exists in its current form because that check did not exist
+the first time round.
 
 An agent may run the commands and report what it saw. It may not mark a case
 passed — that is the whole point of the gate.
@@ -26,11 +23,6 @@ Because that line is easy to blur, each case carries **two** dates:
   agent may write this. It is evidence, not a verdict.
 - **Last passed** — a person looked at that output and accepted it. Only a
   person writes this line.
-
-The distinction earns its keep: the first version of this file had `Last passed`
-dates that an agent had written after running the commands itself. Everything was
-green and nothing had been reviewed, which is precisely the failure UAT exists to
-prevent. Two fields make that mistake impossible to make quietly.
 
 Dates are **batched** — they are updated as part of the next real change rather
 than each earning its own pull request.
@@ -48,61 +40,35 @@ than each earning its own pull request.
 
 ---
 
-## Stock's own cases
+## Sorting Office's cases
 
-### 1. A fresh graft is green before anyone writes code
-
-Run before the PR, against the working tree, because the tag does not exist yet.
-Case 5 is the same check against the real published tag once it does.
+### 1. A fresh clone is green before anyone writes code
 
 - **Command:**
 
   ```bash
-  rm -rf /tmp/graft-check && mkdir -p /tmp/graft-check
-  git ls-files -z | xargs -0 tar cf - | tar xf - -C /tmp/graft-check
-  cd /tmp/graft-check && uv sync && uv run pytest && uv run ruff check .
+  rm -rf /tmp/so-check && mkdir -p /tmp/so-check
+  git ls-files -z | xargs -0 tar cf - | tar xf - -C /tmp/so-check
+  cd /tmp/so-check && uv sync && uv run pytest && uv run ruff check .
   ```
 
   `git ls-files` is what makes this a real rehearsal: it copies only tracked
   files, so anything you forgot to `git add` is missing here exactly as it would
   be missing from a clone.
 
-- **Expect:** lint clean, suite passes, no edits needed to get there. If the
-  first command a new project runs is red, the foundation has broken its one
-  promise.
-- **Last agent run:** 2026-08-16 — 18 passed, ruff clean, from tracked files only.
-- **Last passed:** never — awaiting a human read.
+- **Expect:** lint clean, suite passes, no edits needed to get there.
+- **Last agent run:** 2026-08-17 — 18 passed, ruff clean, from tracked files
+  only. `mise` cannot be installed in a cloud container, so this ran through `uv`
+  directly; the `mise run` equivalents are unverified here.
+- **Last passed:** never
 
-### 2. The guard's failure output tells a human what to do
+### 2. The artifacts read clean to a stranger
 
-- **Command:** add a scenario to `openspec/specs/foundation/spec.md` with no
-  claiming test, run `mise run trace`, then remove it again.
-- **Expect:** the scenario is named, located by file and line, and followed by a
-  `fix:` line you could paste. Judgement call: could someone who has never seen
-  this repo act on the output without reading the guard's source?
-- **Last agent run:** 2026-08-16 — named the scenario, gave `spec.md:115`, and
-  printed a pasteable `fix:` line.
-- **Last passed:** never — the judgement call is a person's.
+The one check that runs **before the commit**. See
+[Context is not content](../WORKFLOW.md#context-is-not-content).
 
-### 3. A declared gap reads as a decision, not an oversight
-
-- **Command:** `mise run trace`, then read
-  `[tool.graftwork.traceability]` in `pyproject.toml`.
-- **Expect:** the summary line accounts for the gap (`… , 1 allowed without
-  one`), and every declared reason still holds today. A reason that has quietly
-  stopped being true is exactly what this case exists to catch.
-- **Last agent run:** 2026-08-16 — `9/12 scenarios claimed by tests, 3 allowed
-  without one`; the three reasons printed in full for reading.
-- **Last passed:** never — whether each reason still holds is a person's call.
-
-### 4. The artifacts read clean to a stranger
-
-The one check that has to happen **before the commit**, not before the PR. Git
-history is rewritten rather than edited, so this case is worth nothing if it runs
-late. See [Context is not content](../WORKFLOW.md#context-is-not-content).
-
-- **Command:** read the change's `proposal.md`, `design.md`, delta specs and any
-  new code as someone with no knowledge of the project would. Then:
+- **Command:** read the change's `proposal.md`, `design.md`, delta specs, ADRs
+  and any new code as someone with no knowledge of the project would. Then:
 
   ```bash
   git diff --cached
@@ -117,40 +83,54 @@ late. See [Context is not content](../WORKFLOW.md#context-is-not-content).
   to understand why a detail is harmless, a stranger reading the public
   repository does not have it.
 
-- **Last agent run:** 2026-08-16 — read the full staged diff for this change;
-  reported no personal or identifying detail. See the completion report.
-- **Last passed:** never — this is the case an agent is least able to close,
-  since it cannot know which details are sensitive to you.
+- **Last agent run:** 2026-08-17 — read the full staged diff. Found one carried
+  ADR naming a product the owner uses and abstracted it; found two more in code
+  not yet staged, flagged for when it lands. Neither was noticed by any grep.
+- **Last passed:** never
 
-### 5. The published tag is actually graftable — *needs a published tag*
+### 3. No mail provider is named, and every address is obviously invented
 
-Case 1 rehearses this against the working tree. This is the real thing, and it is
-the only check that catches a tag pushed to the wrong commit, a tag never pushed,
-or a file that is gitignored in a way nobody noticed.
+Narrower than case 2 and mechanically checkable up to the last step, which is
+where the judgement lives.
 
 - **Command:**
 
   ```bash
-  # against the release candidate, before the stable tag exists
-  git clone --branch v<X.Y.Z>-rc.<N> --depth 1 git@github.com:Graftwork/stock.git /tmp/graft-real
-  rm -rf /tmp/graft-real/.git
-  cd /tmp/graft-real && mise trust && mise install && uv sync && mise run check
+  grep -rniE '@[a-z0-9.-]+\.(com|org|uk|net|io)' --exclude-dir=.git --exclude-dir=.venv .
   ```
 
-- **Expect:** green, and `pyproject.toml` reads `version = "<X.Y.Z>"` — the
-  candidate and the file agree on the version being released. Check the README's
-  graft snippet names the **stable** tag, not the candidate.
+- **Expect:** no mail provider named anywhere
+  ([ADR 0009](decisions/0009-provider-agnostic-collection.md)), and every address
+  on the `sorting-office.test` domain or similarly unmistakable. The judgement: could
+  any of these be real? A grep cannot tell you.
+- **Last agent run:** 2026-08-17 — no provider named, and no email address of any
+  kind in the tree yet, since the code that carries the fixture addresses has not
+  landed.
+- **Last passed:** never
 
-  If this passes, the stable tag goes on the exact commit the candidate points
-  at. If it fails, fix it and cut `-rc.<N+1>`; nothing has been released.
-- **Last agent run:** never — blocked; pushing a tag returns HTTP 403 for this
-  session's credentials.
+### 4. A declared gap reads as a decision, not an oversight
+
+- **Command:** `mise run trace`, then read `[tool.graftwork.traceability]` in
+  `pyproject.toml`.
+- **Expect:** the summary line accounts for the gaps (`…, 3 allowed without
+  one`), and every declared reason still holds today. A reason that has quietly
+  stopped being true is exactly what this case exists to catch.
+- **Last agent run:** 2026-08-17 — `9/12 scenarios claimed by tests, 3 allowed
+  without one`. All three gaps are inherited from Stock and unexamined by this
+  project; whether they hold here is exactly the judgement this case wants.
 - **Last passed:** never
 
 ---
 
 ## Adding cases
 
-A case belongs here when the check needs human senses or human judgement —
-looking at rendered output, reading generated prose, holding a printed part. If
-a test could make the call instead, write the test.
+A case belongs here when the check needs human senses or human judgement. If a
+test could make the call instead, write the test.
+
+Cases this project will earn as the pipeline is built, each needing something to
+exist first:
+
+- A dry-run report at the Counter that a person can act on — does it say *why* a
+  message would be pruned, in words that make sense without reading the code?
+- Mail moved to Trash is still readable from an ordinary mail client.
+- The postbox is genuinely untouched by anything except the sweeper.
