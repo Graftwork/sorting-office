@@ -1,9 +1,19 @@
 [project]
-name = "graftwork-stock"
-version = "0.3.0"
-description = "The rootstock for new projects — a versioned foundation you graft new work onto."
+name = "sorting-office"
+# 0.0.x means nothing runs end to end yet. What each version will mean is
+# defined in docs/RELEASING.md, so the number is a claim about maturity rather
+# than a habit.
+version = "0.0.0"
+description = "Sorts, prunes and re-formats newsletter and marketing email so an inbox stops falling behind."
 requires-python = ">=3.13"
 dependencies = []
+
+# Which version of Graftwork Stock this project was grafted from. A re-sync
+# reads Stock's CHANGELOG from this version forward and applies each entry.
+[tool.graftwork]
+stock-version = "0.3.0-rc.2"
+grafted = "2026-08-16"
+resynced = "2026-08-17"
 
 [dependency-groups]
 dev = [
@@ -38,7 +48,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["scripts"]
+source = ["scripts", "sorting_office"]
 branch = true
 
 [tool.coverage.report]
