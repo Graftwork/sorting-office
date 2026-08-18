@@ -60,7 +60,8 @@ than each earning its own pull request.
 - **Last agent run:** 2026-08-17 — 18 passed, ruff clean, from tracked files
   only. `mise` cannot be installed in a cloud container, so this ran through `uv`
   directly; the `mise run` equivalents are unverified here.
-- **Last passed:** never
+- **Last passed:** 2026-08-18 — accepted on the strength of the `uv`-direct
+  run; the `mise` gap noted above still stands.
 
 ### 2. The artifacts read clean to a stranger
 
@@ -91,7 +92,7 @@ The one check that runs **before the commit**. See
   renumbering script had missed, because it only ran against `openspec/changes/`
   and not `sorting_office/*.py`. Fixed before staging. No personal or
   identifying detail found either time; both misses were process, not privacy.
-- **Last passed:** never
+- **Last passed:** 2026-08-18
 
 ### 3. No mail provider is named, and every address is obviously invented
 
@@ -111,7 +112,7 @@ where the judgement lives.
 - **Last agent run:** 2026-08-17 — no provider named. Every address in the tree
   is on `sorting-office.test`, including `parcels-weekly@` and `stamp-exchange@`
   — the owner's own choices for the retention-behaviour fixtures.
-- **Last passed:** never
+- **Last passed:** 2026-08-18
 
 ### 4. A declared gap reads as a decision, not an oversight
 
@@ -124,7 +125,8 @@ where the judgement lives.
   without one`. `walks` and `retention` now claim 25 scenarios between them; the
   three gaps are still the ones inherited from Stock, unexamined by this
   project. Whether they hold here is exactly the judgement this case wants.
-- **Last passed:** never
+- **Last passed:** 2026-08-18 — the three declared gaps are all inherited from
+  Stock, unexamined by this project until now; accepted as still holding.
 
 ---
 
