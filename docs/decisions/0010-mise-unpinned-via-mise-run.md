@@ -95,6 +95,18 @@ added here since nothing currently needs one.
 
 ## Consequences
 
+- **Confirmed working, 2026-08-18.** A real Custom cloud environment with
+  `mise.run` and `mise.jdx.dev` in Allowed Domains, running this script,
+  installed `mise` successfully — the thing Stock's ADR could not verify,
+  and this ADR could only argue for from reading the installer's logic. The
+  one snag hit was `mise --version` failing before `mise trust` had been
+  run, which is not a gap in this script: Stock's own ADR deliberately
+  scoped this script to installing the binary only, leaving `mise trust`
+  and everything after it to happen the normal way once `mise` is on
+  `PATH` — exactly what this project's own `README.md` Getting Started
+  section already lists as the first step. Expected onboarding, not a
+  defect; recorded here so the next person to hit the same order of
+  operations knows it is not new.
 - **No pin, by design, not by omission.** The version installed will drift
   as mise ships releases, on whatever cadence the environment's cache
   rebuilds (roughly weekly, or sooner if the script or its domains change).
