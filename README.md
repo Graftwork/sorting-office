@@ -112,9 +112,10 @@ from the pre-installed toolchain and can't be fetched by anything a session
 runs — see
 [`stock-0010`](docs/decisions/stock-0010-cloud-environment-setup-script.md) for
 why it has to be a setup script, and
-[ADR 0010](docs/decisions/0010-mise-via-ppa-not-mise-run.md) for why that
-script installs mise via its Ubuntu PPA rather than `mise.run`, once trying
-`mise.run` for real showed it can't finish inside a cloud session at all.
+[ADR 0010](docs/decisions/0010-mise-unpinned-via-mise-run.md) for why the
+script installs mise unpinned — a pinned version, tried first, went stale
+between being written and being tested, and silently started routing
+through GitHub, which a cloud session's proxy blocks.
 [`.claude/setup.sh`](.claude/setup.sh) is the fix, and it needs a one-time,
 per-account manual step: paste it into a cloud environment's Setup Script
 field. Nothing committed to this repo can do that step unassisted.
