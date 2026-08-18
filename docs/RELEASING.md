@@ -112,10 +112,12 @@ Stock's CHANGELOG is a list of migrations waiting to happen here. Read it forwar
 from the `stock-version` recorded in `pyproject.toml`, apply each entry as its own
 small PR, and bump the recorded version when they are all in.
 
-This project currently sits on a **release candidate**, `v0.3.0-rc.2`, which is
-deliberate: it was rebuilt onto `v0.3.0-rc.1` so that the candidate could be
-tested by something real before Stock cuts the stable tag. Move to `v0.3.0` when
-it ships, and expect that to be a no-op if the candidate was any good.
+This project currently sits on Stock's **stable `v0.3.0`**, having been rebuilt
+onto the release candidate `v0.3.0-rc.1` so that the candidate could be tested
+by something real before Stock cut the tag. It was — see below — and the move
+from `v0.3.0-rc.2` to `v0.3.0` was exactly the no-op this section predicted: a
+single-file diff, entirely internal to Stock's own UAT record, that changed
+nothing this project inherits.
 
 It already worked once. This project's own graft was the "something real" that
 found the bug behind `v0.3.0-rc.2` — Stock's own graft steps said nothing about

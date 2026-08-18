@@ -9,6 +9,32 @@ What each version number will mean for this project — and why it is 0.0.0 toda
 
 ### Added
 
+- **`.claude/setup.sh`** installs `mise` on a Claude Code cloud session, the
+  one thing no command run from inside a session can do for itself. Started
+  as Stock's own script, carried over verbatim
+  ([`stock-0010`](docs/decisions/stock-0010-cloud-environment-setup-script.md)),
+  pinned to a specific version — but trying it for real, in an actual Custom
+  environment, failed: `mise.run` downloaded, then its own attempt to fetch
+  the pinned mise binary hit a 403. Reading the installer explained why: the
+  pin matched when it was written and went stale by the time it ran, and a
+  non-matching version routes through a GitHub release asset, which a cloud
+  session's proxy blocks. The script now installs mise **unpinned**, which
+  mise's own docs recommend regardless of this problem, and which also keeps
+  the installer off GitHub permanently rather than until the next stale pin
+  ([ADR 0010](docs/decisions/0010-mise-unpinned-via-mise-run.md); an
+  intermediate attempt via mise's Ubuntu PPA is recorded there too, tried and
+  reverted once the real cause turned out to be the pin, not `mise.run`
+  itself). Same one-time, per-account manual step as Stock's version —
+  pasting the script into a cloud environment's Setup Script field — that
+  nothing committed to a repo can complete unassisted.
+
+### Changed
+
+- **`stock-version` corrected from `0.3.0-rc.2` to `0.3.0`.** Stock cut the
+  stable tag one commit after the candidate this project was already
+  synced to — a single-file diff, internal to Stock's own UAT record, that
+  changes nothing here. Confirmed by diffing the two tags directly rather
+  than assumed from the version numbers alone.
 - Grafted from [Graftwork Stock](https://github.com/Graftwork/stock)
   v0.3.0-rc.1 — pinned toolchain, OpenSpec review layer, spec traceability guard
   with declared gaps, UAT as a human gate, release process, CI, and pre-commit

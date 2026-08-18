@@ -11,9 +11,9 @@ dependencies = []
 # Which version of Graftwork Stock this project was grafted from. A re-sync
 # reads Stock's CHANGELOG from this version forward and applies each entry.
 [tool.graftwork]
-stock-version = "0.3.0-rc.2"
+stock-version = "0.3.0"
 grafted = "2026-08-16"
-resynced = "2026-08-17"
+resynced = "2026-08-18"
 
 [dependency-groups]
 dev = [
