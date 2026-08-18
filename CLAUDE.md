@@ -4,9 +4,18 @@ Guidance for Claude Code working in this repository.
 
 ## What this repo is
 
-Graftwork Stock is a foundation ("rootstock") repo. Projects are grafted from it
-and re-synced as it improves. Changes here propagate outward to real projects, so
-the bar for adding something is higher than in a normal repo — see Conventions.
+Sorting Office is a pipeline that collects newsletter and marketing mail, decides
+how long each message is worth keeping, and clears the rest. It is grafted from
+[Graftwork Stock](https://github.com/Graftwork/stock) and re-synced as that
+improves; the version is in `pyproject.toml` under `[tool.graftwork]`.
+
+It is also a case study in how a Product Owner works with tools like Claude Code,
+so dead ends and reversals are recorded rather than tidied away.
+
+**This repository was rebuilt from a clean graft.** The version before it was
+retired because personal detail supplied as context reached a spec, then code,
+then a push. Read [Context is not content](WORKFLOW.md#context-is-not-content)
+before writing anything down — it is the rule this project exists to keep.
 
 ## Commands
 
@@ -25,17 +34,24 @@ uvx pre-commit run --all-files
 
 ## Architecture
 
-There is deliberately no `src/`. Stock carries the verification layer and nothing
-speculative; a grafted project adds its own package alongside.
+Three stages, deliberately separate: **collection** (empty the postbox),
+**facing** (classify and normalise), **dispatch** (write the result onward). It
+is a reconciliation loop over a pipeline, not a run-once flow — retention re-reads
+current state rather than stamping a verdict on arrival.
 
 - `openspec/specs/<capability>/spec.md` — plain-English scenarios, the review layer
 - `scripts/check_spec_traceability.py` — the guard linking scenarios to tests
 - `tests/` — the suite, including tests of the guard itself
 - `WORKFLOW.md` — how changes are run: the loop, the conventions, OpenSpec's rough edges
 - `docs/UAT.md` — the checks that need human senses, and when they run
-- `docs/RELEASING.md` — how a change to Stock itself gets out: route, version, tag, re-sync
-- `docs/decisions/` — ADRs recording deliberate choices
+- `docs/RELEASING.md` — what a version number means here, and how a change gets out
+- `docs/glossary.md` — the postal vocabulary; read before naming anything new
+- `docs/decisions/` — ADRs; this project's start at 0001, Stock's are `stock-` prefixed
 - `mise.toml` — pinned toolchain and task entry points
+
+**Decisions live apart from the machinery.** Classification and retention decide
+from message metadata and return an answer; the I/O goes around them. That is
+what lets the scenarios be tested before any infrastructure exists.
 
 ## Conventions
 
@@ -63,25 +79,41 @@ is missing or the spec is wrong. Both are real findings. Declaring a gap is not 
 way to make a failure go away — it is a claim, in writing, that no test could
 have kept this promise.
 
-**Keep it unspeculative.** No `src/` ceremony, no publishing pipeline, no
-monorepo layout until a real project needs one. The template grows by promotion
-from things that proved themselves in real projects, never by anticipation. If
-you are tempted to add something "for later", don't.
+**Keep it unspeculative.** No structure until something real needs it. If you are
+tempted to add something "for later", don't.
 
 **Record deliberate choices.** Anything a future reader might mistake for drift
 gets an ADR in `docs/decisions/`.
 
-**Every change here is a migration for grafted projects.** Log it in
-`CHANGELOG.md` so "migrate project Y to Stock vX" is a reviewable batch of small
-PRs rather than an archaeology exercise.
+**Changes take one of two routes.** Anything touching `openspec/specs/`,
+`scripts/`, or the package and its tests runs as a full OpenSpec change — the
+specs are written by archiving, never edited by hand. Docs, ADRs, CI, toolchain
+and permission changes go direct. Either way it reaches `main` by branch and PR,
+never a direct commit. The sequence, and what each version number claims, are in
+[`docs/RELEASING.md`](docs/RELEASING.md).
 
-**Changes to Stock take one of two routes.** Anything touching
-`openspec/specs/`, `scripts/`, or `tests/` runs as a full OpenSpec change — the
-specs are written by archiving, never edited by hand. Docs, CI, toolchain and
-permission changes go direct. Either way it reaches `main` by branch and PR,
-never a direct commit. The full sequence is in
-[`docs/RELEASING.md`](docs/RELEASING.md); the reasoning is
-[Stock ADR 0007](docs/decisions/stock-0007-how-stock-changes-itself.md).
+**Mail loss is the failure that matters.** Anything that clears from the postbox
+must confirm the write to the local mailbox first, and must be exercised in
+dry-run mode before it runs unattended. A bad delete is the one bug with no cheap
+undo.
+
+**Pruning means moving to Trash, never deleting**
+([ADR 0008](docs/decisions/0008-pruning-moves-to-trash.md)). Retention has no way
+to name a delete; do not give it one. Anywhere that needs to mean genuinely gone
+has to say so in those words.
+
+**Name no mail provider, and no real address.** Collection speaks plain IMAP; the
+upstream account is *the postbox*
+([ADR 0009](docs/decisions/0009-provider-agnostic-collection.md)). Walk rules
+name every site signed up to, so they live in a store on the mini PC, not here
+([ADR 0007](docs/decisions/0007-rules-in-a-database.md)). Addresses in tests,
+fixtures and docs are invented and obviously so — `sorting-office.test` is the
+domain to reach for.
+
+**Use the postal vocabulary.** Check [`docs/glossary.md`](docs/glossary.md)
+before naming anything new, and add the term there when you coin one. Never use
+"sieve" as an internal name — in this domain it means RFC 5228, which this
+project [ruled out](docs/decisions/0004-sieve-ruled-out.md).
 
 ## House rules
 
