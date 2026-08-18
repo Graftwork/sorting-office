@@ -128,3 +128,15 @@ added here since nothing currently needs one.
   way, the checksum step has no equivalent override and would still reach
   for GitHub on anything but the current version, so this doesn't cleanly
   solve the problem it would be adopted to solve.
+- **Hand-roll the download in this script, skipping `mise.run` entirely.**
+  Doesn't reduce what the environment needs to reach — `mise.jdx.dev` is
+  still where the tarball comes from either way — and loses something not
+  obvious at first: `mise.run` isn't only a download wrapper, it's the
+  version *and checksum* resolution mechanism. mise's own docs confirm the
+  checksums are baked into the install script's content at the moment it's
+  generated, server-side, not fetchable from any separate stable location —
+  searched for one and found none documented. A hand-rolled script would
+  have to solve that same resolution problem itself, and the only ways
+  found to do it are fetching `mise.run` anyway, hardcoding a version
+  (the staleness bug this ADR exists to fix), or skipping checksum
+  verification (a real security regression, not a simplification).
