@@ -9,6 +9,24 @@ What each version number will mean for this project — and why it is 0.0.0 toda
 
 ### Added
 
+- **`.claude/setup.sh`**, carried over verbatim from Stock
+  ([`stock-0010`](docs/decisions/stock-0010-cloud-environment-setup-script.md)):
+  installs a pinned `mise` on a Claude Code cloud session, the one thing no
+  command run from inside a session can do for itself. Requires a one-time,
+  per-account manual step — pasting the script into a Custom cloud
+  environment's Setup Script field, with `mise.run` added to that
+  environment's allowed domains — that nothing committed to a repo can
+  complete unassisted. Whether the install actually completes past that
+  point hasn't been confirmed by either project; worth recording here once
+  it has been.
+
+### Changed
+
+- **`stock-version` corrected from `0.3.0-rc.2` to `0.3.0`.** Stock cut the
+  stable tag one commit after the candidate this project was already
+  synced to — a single-file diff, internal to Stock's own UAT record, that
+  changes nothing here. Confirmed by diffing the two tags directly rather
+  than assumed from the version numbers alone.
 - Grafted from [Graftwork Stock](https://github.com/Graftwork/stock)
   v0.3.0-rc.1 — pinned toolchain, OpenSpec review layer, spec traceability guard
   with declared gaps, UAT as a human gate, release process, CI, and pre-commit
