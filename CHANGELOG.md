@@ -9,16 +9,19 @@ What each version number will mean for this project — and why it is 0.0.0 toda
 
 ### Added
 
-- **`.claude/setup.sh`**, carried over verbatim from Stock
-  ([`stock-0010`](docs/decisions/stock-0010-cloud-environment-setup-script.md)):
-  installs a pinned `mise` on a Claude Code cloud session, the one thing no
-  command run from inside a session can do for itself. Requires a one-time,
-  per-account manual step — pasting the script into a Custom cloud
-  environment's Setup Script field, with `mise.run` added to that
-  environment's allowed domains — that nothing committed to a repo can
-  complete unassisted. Whether the install actually completes past that
-  point hasn't been confirmed by either project; worth recording here once
-  it has been.
+- **`.claude/setup.sh`** installs `mise` on a Claude Code cloud session, the
+  one thing no command run from inside a session can do for itself. Started
+  as Stock's own script, carried over verbatim
+  ([`stock-0010`](docs/decisions/stock-0010-cloud-environment-setup-script.md)) —
+  but trying it for real, in an actual Custom environment, failed: `mise.run`
+  itself downloaded, then its own attempt to fetch the mise binary hit a 403
+  from GitHub's release-asset repo-scoping. The script now installs mise via
+  its Ubuntu PPA instead, which never touches GitHub
+  ([ADR 0010](docs/decisions/0010-mise-via-ppa-not-mise-run.md)). Requires the
+  same one-time, per-account manual step Stock's version did — pasting the
+  script into a cloud environment's Setup Script field — that nothing
+  committed to a repo can complete unassisted. Version pinning was lost in
+  the switch and is recorded as an open gap, not silently dropped.
 
 ### Changed
 

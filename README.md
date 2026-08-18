@@ -110,11 +110,14 @@ mise run check      # lint + tests
 **On a Claude Code cloud session, `mise` isn't there to trust.** It's absent
 from the pre-installed toolchain and can't be fetched by anything a session
 runs — see
-[`stock-0010`](docs/decisions/stock-0010-cloud-environment-setup-script.md).
+[`stock-0010`](docs/decisions/stock-0010-cloud-environment-setup-script.md) for
+why it has to be a setup script, and
+[ADR 0010](docs/decisions/0010-mise-via-ppa-not-mise-run.md) for why that
+script installs mise via its Ubuntu PPA rather than `mise.run`, once trying
+`mise.run` for real showed it can't finish inside a cloud session at all.
 [`.claude/setup.sh`](.claude/setup.sh) is the fix, and it needs a one-time,
-per-account manual step: paste it into a Custom cloud environment's Setup
-Script field, with `mise.run` added to that environment's allowed domains.
-Nothing committed to this repo can do that step unassisted.
+per-account manual step: paste it into a cloud environment's Setup Script
+field. Nothing committed to this repo can do that step unassisted.
 
 ## How this project is verified
 
