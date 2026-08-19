@@ -107,6 +107,19 @@ mise install && uv sync
 mise run check      # lint + tests
 ```
 
+**On a Claude Code cloud session, `mise` isn't there to trust.** It's absent
+from the pre-installed toolchain and can't be fetched by anything a session
+runs — see
+[`stock-0010`](docs/decisions/stock-0010-cloud-environment-setup-script.md) for
+why it has to be a setup script, and
+[ADR 0010](docs/decisions/0010-mise-unpinned-via-mise-run.md) for why the
+script installs mise unpinned — a pinned version, tried first, went stale
+between being written and being tested, and silently started routing
+through GitHub, which a cloud session's proxy blocks.
+[`.claude/setup.sh`](.claude/setup.sh) is the fix, and it needs a one-time,
+per-account manual step: paste it into a cloud environment's Setup Script
+field. Nothing committed to this repo can do that step unassisted.
+
 ## How this project is verified
 
 Behaviour is described in plain English as scenarios under
@@ -143,6 +156,6 @@ Recorded so the boundaries are deliberate rather than forgotten:
 ## Grafted from Stock
 
 Grafted from [Graftwork Stock](https://github.com/Graftwork/stock) at
-`v0.3.0-rc.1`, currently synced to `v0.3.0-rc.2`; the version is recorded in
+`v0.3.0-rc.1`, currently synced to `v0.3.0` stable; the version is recorded in
 `pyproject.toml` under `[tool.graftwork]`. To re-sync, read Stock's CHANGELOG
 forward from there and apply each entry as a small PR.
