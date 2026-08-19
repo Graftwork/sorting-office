@@ -89,7 +89,9 @@ gets an ADR in `docs/decisions/`.
 `scripts/`, or the package and its tests runs as a full OpenSpec change — the
 specs are written by archiving, never edited by hand. Docs, ADRs, CI, toolchain
 and permission changes go direct. Either way it reaches `main` by branch and PR,
-never a direct commit. The sequence, and what each version number claims, are in
+never a direct commit — the branch prefix, `feature/` or `chore/`, says which
+route; see [WORKFLOW.md](WORKFLOW.md#branch-names-match-the-route). The sequence,
+and what each version number claims, are in
 [`docs/RELEASING.md`](docs/RELEASING.md).
 
 **Mail loss is the failure that matters.** Anything that clears from the postbox
