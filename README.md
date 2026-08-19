@@ -120,6 +120,14 @@ through GitHub, which a cloud session's proxy blocks.
 per-account manual step: paste it into a cloud environment's Setup Script
 field. Nothing committed to this repo can do that step unassisted.
 
+**Getting `mise` installed still doesn't make `mise install`/`mise run`
+work there.** A cloud session's GitHub access is scoped to this one repo, so
+mise can't fetch the pinned Python or `uv` — see
+[ADR 0011](docs/decisions/0011-uv-not-mise-run-on-claude-code-web.md).
+[`.claude/hooks/session-start.sh`](.claude/hooks/session-start.sh) installs
+the dev toolchain with `uv` directly instead, and every `mise run <task>`
+has a direct `uv run`/`npx` equivalent to use in its place.
+
 ## How this project is verified
 
 Behaviour is described in plain English as scenarios under
