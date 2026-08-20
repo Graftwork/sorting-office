@@ -188,6 +188,22 @@ the eyeball task named and left open is correct. Reporting 35/35 is not.
 Cases live in [`docs/UAT.md`](docs/UAT.md), each with a `Last passed` date — the
 date is what stops UAT from going quietly stale.
 
+### Branch names match the route
+
+[Two routes](CLAUDE.md#conventions), two prefixes — the branch says which one
+before you open the PR:
+
+- `feature/<change-name>` — the OpenSpec route. Reuse the change's own directory
+  name (`openspec/changes/<change-name>/`) as the slug, so the branch, the change,
+  and the PR all name the same thing without a second slug to keep in sync. Covers
+  new capability and bug fixes alike — OpenSpec doesn't distinguish the two at the
+  change level, so neither does the branch.
+- `chore/<slug>` — the direct route: docs, ADRs, CI, toolchain, permissions.
+
+Claude Code on the web derives its own `claude/<slug>-<hash>` branch per session,
+which is neither. Rename onto the matching prefix (`git branch -m`) before opening
+the PR.
+
 ### Prove you didn't break the existing thing
 
 For any additive change, include a task that *proves* the untouched path is
