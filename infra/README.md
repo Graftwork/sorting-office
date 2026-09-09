@@ -48,7 +48,7 @@ Also needed:
 
 - Tailscale installed and joined to the tailnet (already true per ADR 0001 —
   pi-hole depends on it).
-- This repo cloned somewhere durable, e.g. `/opt/sorting-office`.
+- This repo cloned somewhere durable, e.g. `$HOME/sorting-office`.
 
 Find the tailnet address everything below binds to, and keep it handy:
 
@@ -63,20 +63,20 @@ less trusted.
 ## The local mailbox (Dovecot)
 
 ```bash
-cd /opt/sorting-office/infra/dovecot
+cd $HOME/sorting-office/infra/dovecot
 docker build -t sorting-office-dovecot .
 
 # Real users, not the test fixture from the repo's own verification pass.
 # scheme=CRYPT in local.conf accepts SHA-512 crypt ($6$) hashes.
-mkdir -p /opt/sorting-office/data/dovecot
-printf 'sweeper:%s\n' "$(openssl passwd -6)" > /opt/sorting-office/data/dovecot/users
-mkdir -p /opt/sorting-office/data/dovecot/mail
+mkdir -p $HOME/sorting-office/data/dovecot
+printf 'sweeper:%s\n' "$(openssl passwd -6)" > $HOME/sorting-office/data/dovecot/users
+mkdir -p $HOME/sorting-office/data/dovecot/mail
 
 docker run -d --name sorting-office-dovecot \
   --restart unless-stopped \
   -p "$(tailscale ip -4)":1144:143 \
-  -v /opt/sorting-office/data/dovecot/users:/etc/dovecot/users:ro \
-  -v /opt/sorting-office/data/dovecot/mail:/var/mail/vhosts \
+  -v $HOME/sorting-office/data/dovecot/users:/etc/dovecot/users:ro \
+  -v $HOME/sorting-office/data/dovecot/mail:/var/mail/vhosts \
   sorting-office-dovecot
 ```
 
@@ -104,19 +104,19 @@ know which provider you're bridging to — get that provider's own official
 `.deb` onto the mini PC yourself, from their own release channel.
 
 ```bash
-cd /opt/sorting-office/infra/bridge
+cd $HOME/sorting-office/infra/bridge
 cp /path/to/the/providers/release.deb ./bridge.deb
 docker build --build-arg BRIDGE_DEB=bridge.deb -t sorting-office-bridge .
 rm bridge.deb   # only ever a local build input, never committed
 
-mkdir -p /opt/sorting-office/data/bridge
+mkdir -p $HOME/sorting-office/data/bridge
 
 # 1143 is already above 1024, so unlike Dovecot's 143 this needs no remap —
 # rootless can bind it directly.
 docker run -d --name sorting-office-bridge \
   --restart unless-stopped \
   -e BRIDGE_KEYRING_PASSPHRASE=<a passphrase you choose, kept off this repo> \
-  -v /opt/sorting-office/data/bridge:/data/keyrings \
+  -v $HOME/sorting-office/data/bridge:/data/keyrings \
   -p "$(tailscale ip -4)":1143:1143 \
   sorting-office-bridge \
   <the provider's bridge binary and flags for headless/CLI mode>
