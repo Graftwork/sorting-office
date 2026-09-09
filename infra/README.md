@@ -12,9 +12,40 @@ once it exists.
 
 ## Once, on a fresh mini PC
 
-- Docker installed, and enabled to start on boot (`systemctl enable --now
-  docker` — most distros already do this by default; confirm rather than
-  assume).
+Runtime is Podman, rootless, via the `podman-docker` compatibility shim — every
+`docker` command below is really running `podman` (`/usr/bin/docker` is a
+one-line script that execs it). Chosen over Docker's own daemon deliberately:
+rootless means the bridge — the one container holding live mail credentials
+(ADR 0012) — never runs as a process with root's own privileges on the host.
+
+```bash
+sudo apt install podman-docker
+```
+
+Two things that follow from rootless specifically, not from Podman in general:
+
+- **Port 143 needs a remap.** A rootless container can't bind a port below
+  1024 on the host — confirmed directly (`bind(0.0.0.0, 143) failed:
+  Permission denied`), not assumed. Map Dovecot's container-side 143 to a
+  host-side port above 1024 instead (1144 is used below, distinct from the
+  bridge's own 1143) — that's the host port IMAP clients connect to.
+- **`--restart unless-stopped` needs linger to survive a reboot**, since a
+  rootless container is a process owned by your user's session, and without
+  it the session (and everything in it) doesn't start until that user logs
+  in:
+
+  ```bash
+  loginctl enable-linger "$(whoami)"
+  ```
+
+  This part isn't re-verified end-to-end against an actual reboot below — it's
+  documented Podman behaviour, not something tested in this pass. Worth
+  confirming for real once both containers are up: reboot the mini PC and
+  check `docker ps` afterwards without logging in and starting anything by
+  hand.
+
+Also needed:
+
 - Tailscale installed and joined to the tailnet (already true per ADR 0001 —
   pi-hole depends on it).
 - This repo cloned somewhere durable, e.g. `/opt/sorting-office`.
@@ -43,24 +74,28 @@ mkdir -p /opt/sorting-office/data/dovecot/mail
 
 docker run -d --name sorting-office-dovecot \
   --restart unless-stopped \
-  -p "$(tailscale ip -4)":143:143 \
+  -p "$(tailscale ip -4)":1144:143 \
   -v /opt/sorting-office/data/dovecot/users:/etc/dovecot/users:ro \
   -v /opt/sorting-office/data/dovecot/mail:/var/mail/vhosts \
   sorting-office-dovecot
 ```
 
+Host-side port is 1144, not 143 — rootless can't bind the privileged port
+directly (see above), and 1143 is already the bridge's port below. Dovecot
+inside the container still listens on 143; only the host-side mapping moves.
+Point IMAP clients at `<tailnet address>:1144`.
+
 The mail volume has to be a host path, not left as the container's writable
 layer — otherwise `docker rm` (a rebuild, a crash recovery) silently empties
 the mailbox retention depends on.
 
-Confirm it's actually serving, not just running (same check used to verify the
-image itself — see the repo's commit history for `infra/dovecot`):
+Confirm it's actually serving, not just running — verified for real, end to
+end, against this exact image under rootless Podman: LOGIN succeeded and
+`LIST "" *` returned `INBOX`. Repeat the same check here:
 
 ```bash
-curl -v --url "imap://$(tailscale ip -4)/" -u sweeper:<password>
+curl -v --url "imap://$(tailscale ip -4):1144/" -u sweeper:<password>
 ```
-
-LOGIN should succeed and `LIST "" *` should return `INBOX`.
 
 ## The postbox's bridge
 
@@ -76,6 +111,8 @@ rm bridge.deb   # only ever a local build input, never committed
 
 mkdir -p /opt/sorting-office/data/bridge
 
+# 1143 is already above 1024, so unlike Dovecot's 143 this needs no remap —
+# rootless can bind it directly.
 docker run -d --name sorting-office-bridge \
   --restart unless-stopped \
   -e BRIDGE_KEYRING_PASSPHRASE=<a passphrase you choose, kept off this repo> \
