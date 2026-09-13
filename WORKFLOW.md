@@ -190,19 +190,51 @@ date is what stops UAT from going quietly stale.
 
 ### Branch names match the route
 
-[Two routes](CLAUDE.md#conventions), two prefixes — the branch says which one
-before you open the PR:
+Every branch reaches `main` by PR, never a direct commit — see
+[Changes take one of two routes](CLAUDE.md#conventions). The prefix names the
+route, and what kind of change it is within it. Slugs are kebab-case
+throughout.
 
-- `feature/<change-name>` — the OpenSpec route. Reuse the change's own directory
-  name (`openspec/changes/<change-name>/`) as the slug, so the branch, the change,
-  and the PR all name the same thing without a second slug to keep in sync. Covers
-  new capability and bug fixes alike — OpenSpec doesn't distinguish the two at the
-  change level, so neither does the branch.
-- `chore/<slug>` — the direct route: docs, ADRs, CI, toolchain, permissions.
+**OpenSpec route** — touches `openspec/specs/`, `scripts/`, or
+`sorting_office/` and its tests:
 
-Claude Code on the web derives its own `claude/<slug>-<hash>` branch per session,
-which is neither. Rename onto the matching prefix (`git branch -m`) before opening
-the PR.
+- `feature/<change-name>` — new capability. Reuse the change's own directory
+  name (`openspec/changes/<change-name>/`) as the slug, so the branch, the
+  change, and the PR all name the same thing.
+- `bugfix/<change-name>` — a bug fix. Still the OpenSpec route: OpenSpec
+  doesn't distinguish a bug fix from a new capability at the change level,
+  so this names intent, not a different process from `feature/`.
+
+**Direct route** — everything else:
+
+- `chore/<slug>` — maintenance: toolchain, permissions, dependency bumps.
+- `docs/<slug>` — documentation only: README, CLAUDE.md, this file, ADRs.
+- `ci/<slug>` — `.github/workflows/` changes.
+- `refactor/<slug>` — restructuring with no behavior change, outside
+  `openspec/specs/`, `scripts/`, and `sorting_office/`/`tests/`. A refactor
+  touching any of those three is the OpenSpec route regardless of prefix —
+  there's no "just a refactor" exception to that rule.
+- `test/<slug>` — same carve-out: test infrastructure (`conftest.py`,
+  coverage config) outside `tests/` itself. A change to `tests/` content is
+  the OpenSpec route.
+
+**Not adopted: `release/`, `hotfix/`.** Both name a step or a lane this
+project doesn't have. `release/` usually marks a branch that stabilizes code
+before shipping — this project has no candidate-tag step (see
+[`docs/RELEASING.md`](docs/RELEASING.md#7-merge-and-tag-if-a-milestone-was-reached)),
+so there's no step for it to attach to. `hotfix/` usually marks an expedited
+or unreviewed path to production — there is no unreviewed path to `main` and
+no separate expedited review lane, so nothing distinguishes an "urgent"
+branch from any other. Adding either would document something this project
+doesn't do.
+
+Claude Code on the web derives its own `claude/<slug>-<hash>` branch per
+session, which is none of these. Rename onto the matching prefix
+(`git branch -m`) before opening the PR.
+
+Brought over from Stock's own generalization of this convention
+([Stock CHANGELOG v0.4.0](https://github.com/Graftwork/stock/blob/main/CHANGELOG.md)),
+which in turn started from this project's original two-prefix version.
 
 ### Prove you didn't break the existing thing
 
