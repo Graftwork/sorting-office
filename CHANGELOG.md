@@ -9,6 +9,37 @@ What each version number will mean for this project — and why it is 0.0.0 toda
 
 ### Added
 
+- **Re-synced to Stock `v0.4.0`.** A minor, additive release — nothing here
+  broke by staying on `v0.3.0` — applied as a mechanical batch since `main`
+  was already settled (unlike the `v0.3.0-rc.1` → `rc.2` resync, this one
+  didn't need the in-flight-graft skill). `stock-version` in `pyproject.toml`
+  now reads `0.4.0`. Brought over:
+  - [`stock-0009`](docs/decisions/stock-0009-not-a-template-repo.md),
+    [`stock-0011`](docs/decisions/stock-0011-resync-in-flight-graft-skill.md),
+    and [`stock-0013`](docs/decisions/stock-0013-defer-to-tool-defaults-over-suppressions.md)
+    — the three Stock ADRs added since `v0.3.0` that this project didn't
+    already have a copy of.
+  - `.claude/skills/resync-in-flight-graft/` renamed to
+    `.claude/skills/stock-resync-in-flight-graft/`, matching Stock's own
+    formalization of the skill this project wrote (`stock-0011`) — the
+    prefix lets a future resync tell at a glance which `.claude/skills/`
+    entries are Stock's (safe to overwrite) versus this project's own.
+  - `WORKFLOW.md`'s "Branch names match the route" expanded from this
+    project's original two prefixes (`feature/`, `chore/`) to Stock's fuller
+    set (`feature/`, `bugfix/`, `chore/`, `docs/`, `ci/`, `refactor/`,
+    `test/`, explicitly not `release/`/`hotfix/`) — Stock generalized this
+    from this project's own convention; adopting the fuller version back is
+    documentation catching up, not a behavior change.
+  - A new `CLAUDE.md` house rule, "Default to a tool's own defaults over a
+    suppression" (`stock-0013`).
+  - `jdx/mise-action@v4` in `.github/workflows/ci.yml` now sets
+    `minimum_release_age: 7d`, guarding against a brand-new mise release
+    shipping assets that 404 for the first few days — the bug Stock hit and
+    fixed this way.
+
+  Not brought over here: Stock's own `LICENSE`/`NOTICE`/`stock-0014` — that
+  decision was made independently for this project in a separate change
+  (see [ADR 0013](docs/decisions/0013-apache-2-0-license-and-copyright.md)).
 - **`.claude/setup.sh`** installs `mise` on a Claude Code cloud session, the
   one thing no command run from inside a session can do for itself. Started
   as Stock's own script, carried over verbatim
@@ -65,7 +96,9 @@ What each version number will mean for this project — and why it is 0.0.0 toda
   and resolved conflicts by keeping this project's own rewritten docs, since
   none of Stock's specific text in this diff was about anything but Stock's
   own release process. First real use of
-  [the resync-in-flight-graft skill](.claude/skills/resync-in-flight-graft/SKILL.md),
+  [the resync-in-flight-graft skill](.claude/skills/stock-resync-in-flight-graft/SKILL.md)
+  (renamed with the `stock-` prefix when Stock brought it back into its own
+  foundation — see the `[Unreleased]` entry below),
   written from doing this once so the next Stock update doesn't start from
   nothing.
 

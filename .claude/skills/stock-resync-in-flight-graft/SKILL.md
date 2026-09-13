@@ -1,5 +1,5 @@
 ---
-name: resync-in-flight-graft
+name: stock-resync-in-flight-graft
 description: Bring a project grafted from Graftwork Stock up to a newer Stock tag while the project's own first work is still mid-flight — nothing merged to a settled main yet, everything living on one branch. Use when Stock has moved (a new rc or a new release) and the grafted project needs to pick it up without a mechanical merge mangling docs the project has already rewritten for its own identity.
 license: MIT
 compatibility: Requires the graft to follow the rolling-main pattern below; a git remote for Stock reachable to diff and fetch tags from.
