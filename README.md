@@ -167,3 +167,8 @@ Grafted from [Graftwork Stock](https://github.com/Graftwork/stock) at
 `v0.3.0-rc.1`, currently synced to `v0.3.0` stable; the version is recorded in
 `pyproject.toml` under `[tool.graftwork]`. To re-sync, read Stock's CHANGELOG
 forward from there and apply each entry as a small PR.
+
+## License
+
+Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE), and
+[ADR 0013](docs/decisions/0013-apache-2-0-license-and-copyright.md) for why.

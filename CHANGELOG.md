@@ -9,6 +9,17 @@ What each version number will mean for this project — and why it is 0.0.0 toda
 
 ### Added
 
+- **`LICENSE` and `NOTICE`** — Apache License 2.0, copyright held by James
+  Rennison individually rather than by "Graftwork" (a repo name, not a legal
+  entity). See [ADR 0013](docs/decisions/0013-apache-2-0-license-and-copyright.md).
+  Found missing during the pre-publication review ahead of making the
+  repository public: with no `LICENSE`, default exclusive copyright applied,
+  which is incompatible with a repository meant to be shared. Mirrors
+  [Stock ADR 0014](docs/decisions/stock-0014-license-and-copyright.md), which
+  hit the identical gap for the identical reason and settled the same
+  question for Stock itself; that ADR is explicit the decision doesn't
+  extend here, so it was confirmed independently with the owner rather than
+  assumed.
 - **`.claude/setup.sh`** installs `mise` on a Claude Code cloud session, the
   one thing no command run from inside a session can do for itself. Started
   as Stock's own script, carried over verbatim
