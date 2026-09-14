@@ -167,6 +167,12 @@ unfinished is the correct outcome, not a shortfall.
 
 **Disclose AI authorship in pull requests** — the coding agent and the model.
 
+**Default to a tool's own defaults over a suppression.** A `# noqa`, a
+type-checker ignore, a skipped test, any exception to a default — treat it
+as needing a written justification, the same bar a declared traceability
+gap already holds, not a routine option sitting alongside the default. See
+[Stock ADR 0013](docs/decisions/stock-0013-defer-to-tool-defaults-over-suppressions.md).
+
 ## Notes
 
 - OpenSpec is `@fission-ai/openspec`, pinned via `OPENSPEC_VERSION` in `mise.toml`.
