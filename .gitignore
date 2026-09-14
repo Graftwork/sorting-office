@@ -20,3 +20,17 @@ node_modules/
 
 # OS
 .DS_Store
+
+# Mini PC runtime state: real mailbox data, keyrings, the sweeper's real
+# credentials — deployment configuration, never committed (ADR 0009,
+# infra/README.md)
+/data/
+
+# Build-input/verification artifacts fetched onto the mini PC for
+# infra/bridge — the provider's .deb, its signature, and the verification
+# key/policy. Local inputs only; nothing here is ever baked into the image
+# or belongs in the repo (see infra/bridge/Dockerfile)
+infra/bridge/*.deb
+infra/bridge/*.deb.sig
+infra/bridge/*.pol
+infra/bridge/*.gpg
