@@ -9,6 +9,21 @@ What each version number will mean for this project — and why it is 0.0.0 toda
 
 ### Added
 
+- **[`docs/GOING_PUBLIC.md`](docs/GOING_PUBLIC.md)** and
+  [ADR 0014](docs/decisions/0014-going-public-checklist-adopted.md) — a
+  once-only checklist for when this repository's visibility actually
+  changes, grafted from Stock ahead of any tagged release
+  ([Stock ADR 0015](docs/decisions/stock-0015-going-public-checklist.md)),
+  since `Graftwork/stock` went public first and hit exactly this project's
+  upcoming situation. Running it surfaced two unrelated gaps, fixed in the
+  same change: `stock-0012` and `stock-0014` — both present in Stock at the
+  `v0.4.0` tag this project already claims — were missing from
+  `docs/decisions/`, and `README.md`'s "Grafted from Stock" section still
+  said `v0.3.0` after the `v0.4.0` resync (#9) never touched it. Checklist
+  items 1–4 (license, full-history secret scan, cross-repo references,
+  stale wording) all came back clean; items 5–7 (stranger read, flipping
+  visibility, GitHub branch protection) are left open for the owner — see
+  the ADR.
 - **Re-synced to Stock `v0.4.0`.** A minor, additive release — nothing here
   broke by staying on `v0.3.0` — applied as a mechanical batch since `main`
   was already settled (unlike the `v0.3.0-rc.1` → `rc.2` resync, this one
