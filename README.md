@@ -164,9 +164,15 @@ Recorded so the boundaries are deliberate rather than forgotten:
 ## Grafted from Stock
 
 Grafted from [Graftwork Stock](https://github.com/Graftwork/stock) at
-`v0.3.0-rc.1`, currently synced to `v0.3.0` stable; the version is recorded in
+`v0.3.0-rc.1`, currently synced to `v0.4.0`; the version is recorded in
 `pyproject.toml` under `[tool.graftwork]`. To re-sync, read Stock's CHANGELOG
 forward from there and apply each entry as a small PR.
+
+## Going public
+
+Before this repository's visibility changes, work
+[`docs/GOING_PUBLIC.md`](docs/GOING_PUBLIC.md) — a once-only checklist,
+grafted from Stock's own ([Stock ADR 0015](docs/decisions/stock-0015-going-public-checklist.md)).
 
 ## License
 
