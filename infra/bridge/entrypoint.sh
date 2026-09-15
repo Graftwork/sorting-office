@@ -1,13 +1,15 @@
 #!/bin/sh
 set -eu
 
-# Filesystem-backed credential store standing in for the desktop secret
-# service the bridge expects by default (ADR 0012): a keyring file on the
-# mounted data volume, unlocked at startup with a passphrase supplied by the
-# deployment — never baked into this image.
+# Everything the bridge keeps between runs — its own account/vault config
+# and cache, not just the keyring secret — lives under one mounted home
+# directory. A keyring-only mount looked sufficient but wasn't: the app's
+# own state sat outside it, under its own cache directory elsewhere in the
+# home directory, so a container recreation silently discarded a completed
+# pairing while leaving the keyring itself intact.
 : "${BRIDGE_KEYRING_PASSPHRASE:?BRIDGE_KEYRING_PASSPHRASE must be set}"
-export XDG_DATA_HOME=/data/keyrings
-mkdir -p "$XDG_DATA_HOME"
+export HOME=/data
+mkdir -p "$HOME"
 
 eval "$(dbus-launch --sh-syntax)"
 export DBUS_SESSION_BUS_ADDRESS DBUS_SESSION_BUS_PID

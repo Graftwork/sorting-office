@@ -110,33 +110,56 @@ docker build --build-arg BRIDGE_DEB=bridge.deb -t sorting-office-bridge .
 rm bridge.deb   # only ever a local build input, never committed
 
 mkdir -p $HOME/sorting-office/data/bridge
+```
 
-# 1143 is already above 1024, so unlike Dovecot's 143 this needs no remap —
-# rootless can bind it directly.
-docker run -d --name sorting-office-bridge \
-  --restart unless-stopped \
+The volume mounts at `/data`, and the container's entrypoint points `HOME`
+there — not just the keyring's own storage. Found the hard way: an earlier
+version of this only redirected the keyring, and the bridge's own account
+config and cache turned out to live elsewhere under `$HOME`, outside that
+mount. A container recreation silently discarded a completed pairing while
+leaving the keyring itself intact — `list` reported no active accounts after
+a `docker rm`/`docker run` against a volume that visibly still had content.
+Redirecting the whole home directory means whatever the app decides to
+persist, wherever it puts it, ends up under the one mounted path.
+
+**One-time interactive pairing** — nothing committed to this repo can do this
+step unassisted (ADR 0012); it needs you, present, with the account's password
+and second factor. Run it attached, in the foreground, not detached, so you
+can actually drive the login:
+
+```bash
+docker run -it --name sorting-office-bridge \
   -e BRIDGE_KEYRING_PASSPHRASE=<a passphrase you choose, kept off this repo> \
-  -v $HOME/sorting-office/data/bridge:/data/keyrings \
+  -v $HOME/sorting-office/data/bridge:/data \
   -p "$(tailscale ip -4)":1143:1143 \
   sorting-office-bridge \
   <the provider's bridge binary and flags for headless/CLI mode>
 ```
 
-The keyring volume is a host path for the same reason the mailbox is: losing it
-means redoing the pairing below, not losing mail, but it's still avoidable.
-
-**One-time interactive pairing** — nothing committed to this repo can do this
-step unassisted (ADR 0012); it needs you, present, with the account's password
-and second factor:
+Follow that shell's own login flow — `help` lists the actual command names
+rather than guessing them. Once paired, exit the shell (this stops the
+container; that's fine, the pairing lives in the volume, not the container)
+and start the real persistent one from the same volume:
 
 ```bash
-docker exec -it sorting-office-bridge <the provider's bridge binary> --cli
+docker rm sorting-office-bridge
+docker run -d -i --name sorting-office-bridge \
+  --restart unless-stopped \
+  -e BRIDGE_KEYRING_PASSPHRASE=<the same passphrase as the pairing run> \
+  -v $HOME/sorting-office/data/bridge:/data \
+  -p "$(tailscale ip -4)":1143:1143 \
+  sorting-office-bridge \
+  <the provider's bridge binary and flags for headless/CLI mode>
 ```
 
-Follow that shell's own login flow. Once paired, the credential lives in the
-mounted keyring volume and survives `docker restart` — the container's own
-entrypoint re-unlocks it with `BRIDGE_KEYRING_PASSPHRASE` on every start, no
-re-pairing needed unless that volume is lost.
+`-i` matters even though this is detached (`-d`): without it, the CLI's own
+shell hits EOF immediately on the closed stdin and the container exits right
+after printing its banner. `--restart unless-stopped` means a dropped session
+or a transient crash doesn't take it down for good — Podman brings it back
+rather than it sitting dead until someone notices. The credential lives in
+the mounted volume and survives every restart or recreation from here on —
+the container's own entrypoint re-unlocks it with `BRIDGE_KEYRING_PASSPHRASE`
+on every start, no re-pairing needed unless that volume is lost.
 
 Confirm the bridge is actually serving IMAP post-pairing the same way as
 Dovecot above — `curl imap://` against its bound address and port, real LOGIN,
