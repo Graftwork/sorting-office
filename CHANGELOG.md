@@ -7,6 +7,19 @@ What each version number will mean for this project — and why it is 0.0.0 toda
 
 ## [Unreleased]
 
+### Changed
+
+- **`WORKFLOW.md`'s "field experience" example swapped from Stock's own
+  (about OrcaSlicer, a 3D-printing slicer — inherited verbatim from the
+  graft, unrelated to this project's domain) to a real one from this
+  project: [ADR 0005](docs/decisions/0005-n8n-execution-engine.md) assumed
+  Docker, and deploying to the mini PC for real showed Podman was the
+  better fit. Both ADRs stay `proposed` — this doesn't formally accept
+  Podman, since the deployment work isn't merged yet. Found by the
+  going-public checklist's item 5 (stranger read): the original example
+  read as an out-of-place leftover next to a mail-sorting project, though
+  it identified no one and leaked nothing.
+
 ### Fixed
 
 - **Four broken relative links**, found by the going-public checklist's item 5
