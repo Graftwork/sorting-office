@@ -127,7 +127,7 @@ a credit line, because the fix itself had already been applied here by hand
 before Stock formalized it. The mechanics of *doing* the re-sync mid-flight —
 nothing merged yet, one branch carrying all the project's own rewrites — are
 their own small piece of process, kept as
-[a skill](.claude/skills/stock-resync-in-flight-graft/SKILL.md) rather than
+[a skill](../.claude/skills/stock-resync-in-flight-graft/SKILL.md) rather than
 worked out fresh next time. Stock brought the skill back into its own
 foundation, renamed with the `stock-` prefix so a later re-sync can tell at a
 glance whether `.claude/skills/<name>/` is safe to overwrite

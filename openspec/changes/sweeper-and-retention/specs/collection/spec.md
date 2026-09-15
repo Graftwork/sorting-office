@@ -5,7 +5,7 @@
 The postbox is reached over IMAP and nothing else, so the sweeper SHALL NOT
 depend on anything specific to a mail provider. Whatever a given provider needs
 in order to expose IMAP is deployment configuration. See
-[ADR 0009](../../../../docs/decisions/0009-provider-agnostic-collection.md).
+[ADR 0009](../../../../../docs/decisions/0009-provider-agnostic-collection.md).
 
 #### Scenario: Any IMAP postbox can be swept
 
