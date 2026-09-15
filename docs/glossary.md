@@ -51,6 +51,6 @@ import that meaning, so be explicit when the distinction matters.
 
 **Never use "Sieve" as an internal name**, however tempting the metaphor. In this
 exact domain it means the RFC 5228 mail filtering language, which this project
-[considered and ruled out](decisions/0008-sieve-ruled-out.md); reusing the word
+[considered and ruled out](decisions/0004-sieve-ruled-out.md); reusing the word
 internally would confuse anyone reading the repo. For the same reason, avoid
 `pigeonhole` — that is Dovecot's Sieve implementation.

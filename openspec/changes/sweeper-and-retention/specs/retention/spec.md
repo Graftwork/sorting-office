@@ -5,7 +5,7 @@
 Mail loss is the one failure without a cheap undo, so retention SHALL prune by
 moving a message to a local Trash folder, and SHALL NOT delete. This applies to
 every retention behaviour. See
-[ADR 0008](../../../../docs/decisions/0008-pruning-moves-to-trash.md).
+[ADR 0008](../../../../../docs/decisions/0008-pruning-moves-to-trash.md).
 
 #### Scenario: A pruned message is moved to Trash rather than deleted
 

@@ -7,6 +7,17 @@ What each version number will mean for this project — and why it is 0.0.0 toda
 
 ## [Unreleased]
 
+### Fixed
+
+- **Four broken relative links**, found by the going-public checklist's item 5
+  (the whole-repository stranger read): `docs/glossary.md` pointed to
+  `decisions/0008-sieve-ruled-out.md` (that ADR is `0004`; `0008` is pruning-
+  moves-to-Trash); `docs/RELEASING.md` linked to `.claude/skills/…` without
+  the `../` needed from inside `docs/`; and two spec files under
+  `openspec/changes/sweeper-and-retention/specs/` referenced
+  `docs/decisions/` with one `../` too few. Found with a small script
+  checking every markdown relative link resolves, not by eye.
+
 ### Added
 
 - **[`docs/GOING_PUBLIC.md`](docs/GOING_PUBLIC.md)** and
