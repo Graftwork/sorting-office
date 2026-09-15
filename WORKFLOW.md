@@ -285,8 +285,9 @@ day the suite earns it.
 ### The product owner
 
 - **Supplies the ground truth the agent cannot observe.** Field experience —
-  "we've been cutting these in OrcaSlicer for months and it's been fine" — is
-  data the agent does not have and cannot derive. It outranks the agent's
+  "we assumed Docker, per [ADR 0005](docs/decisions/0005-n8n-execution-engine.md)
+  — but deploying for real showed Podman was the better fit for the mini PC" —
+  is data the agent does not have and cannot derive. It outranks the agent's
   theory.
 - **Answers the genuine forks.** Decisions that lead to different code.
 - **Decides what to throw away.** Scaling a change down is the PO's call.
