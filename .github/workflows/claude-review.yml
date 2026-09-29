@@ -149,7 +149,9 @@ jobs:
           # allowlist of variables and this one is not on it. If a run with
           # this in place still posts nothing, revert this input and keep the
           # Skill grant.
-          settings: '{"env": {"CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"}}'
+          # CONTROL RUN — switch temporarily off to compare against the run that
+          # had it on. Restore or remove after the control PR has been read.
+          # settings: '{"env": {"CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"}}'
           # TEMPORARY DIAGNOSTIC — remove after the next review run has been read.
           # Prints the full Claude transcript into the (publicly visible) run
           # log, including tool results, which can contain secrets. It exists
