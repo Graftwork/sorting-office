@@ -100,12 +100,30 @@ jobs:
           # the working directory Claude starts in (that's the base-branch
           # checkout) — this is what grants explicit, read access to it.
           #
-          # --allowedTools carries two separate grants, needed for two
-          # separate reasons. mcp__github_inline_comment__create_inline_comment:
-          # without naming it here, the action never starts the MCP server that
-          # posts inline PR comments at all — the code-review skill's own
-          # allowed-tools frontmatter naming the same tool is not sufficient on
-          # its own. Bash(gh pr comment:*): per the command's own source
+          # --allowedTools carries three separate grants, needed for three
+          # separate reasons. Skill(code-review:code-review): the prompt above
+          # runs the review by invoking /code-review:code-review, and invoking
+          # any skill goes through the Skill tool — without granting it here,
+          # the very first thing this workflow does is denied, before the
+          # review ever starts. Scoped to that one skill by its qualified
+          # name, not a bare `Skill` grant — documented syntax
+          # (docs.claude.com/en/skills.md, "Restrict Claude's skill access":
+          # `Skill(name)` for exact match, matching a plugin-qualified name
+          # the same way its own example `Skill(anthropic-skills:pdf)` does).
+          # A bare grant would pre-approve invoking any other skill too, with
+          # no human present — this workflow's own threat model above is
+          # attacker-controlled fork-PR content steering the model into
+          # misusing tools it already holds, and the plugin marketplace this
+          # skill comes from is itself un-pinned (see the comment on
+          # plugin_marketplaces above). Taken from Graftwork/stock PR #30,
+          # where the denial showed up as `Skill` with
+          # `code-review:code-review` as the first entry in
+          # permission_denials, after which the run posted nothing.
+          # mcp__github_inline_comment__create_inline_comment: without naming
+          # it here, the action never starts the MCP server that posts inline
+          # PR comments at all — the code-review skill's own allowed-tools
+          # frontmatter naming the same tool is not sufficient on its own.
+          # Bash(gh pr comment:*): per the command's own source
           # (anthropics/claude-code, plugins/code-review/commands/code-review.md),
           # a clean review with no issues posts its "No issues found" summary via
           # `gh pr comment`, a completely different, Bash-invoked path. Confirmed
@@ -115,7 +133,23 @@ jobs:
           # flag, but was blocked from posting that outcome at all. Re-run with
           # this fix on PR #9 of the same repo posted the "No issues found"
           # comment successfully.
-          claude_args: '--add-dir pr-head --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*)"'
+          claude_args: '--add-dir pr-head --allowedTools "Skill(code-review:code-review),mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*)"'
+          # EXPERIMENT — the Skill grant above is necessary but was not enough
+          # in Graftwork/talks (throwaway PR #8): with it, zero permission
+          # denials and still nothing posted. The code-review plugin starts a
+          # background subagent and waits for it, but this action runs a single
+          # non-interactive turn that ends before the result returns, and the
+          # run still reports success. CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1
+          # made a subagent run in the foreground in a local `claude -p` run,
+          # though the local CLI never reproduced the action's failure, so only
+          # a real run of this workflow can say whether it helps. Delivered via
+          # the `settings` input (written to ~/.claude/settings.json, whose
+          # `env` key Claude Code applies to its own process), not a step-level
+          # `env:` — the pinned action.yml passes the Claude step an explicit
+          # allowlist of variables and this one is not on it. If a run with
+          # this in place still posts nothing, revert this input and keep the
+          # Skill grant.
+          settings: '{"env": {"CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"}}'
           # Dependabot PRs only ever touch dependency-pin lines (pyproject.toml, devcontainer
           # feature versions), so they carry no attacker-controlled content; allow the action to
           # run for them rather than failing every dependency-bump PR's review check.
