@@ -134,30 +134,29 @@ jobs:
           # this fix on PR #9 of the same repo posted the "No issues found"
           # comment successfully.
           claude_args: '--add-dir pr-head --allowedTools "Skill(code-review:code-review),mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*)"'
-          # EXPERIMENT — the Skill grant above is necessary but was not enough
-          # in Graftwork/talks (throwaway PR #8): with it, zero permission
-          # denials and still nothing posted. The code-review plugin starts a
-          # background subagent and waits for it, but this action runs a single
-          # non-interactive turn that ends before the result returns, and the
-          # run still reports success. CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1
-          # made a subagent run in the foreground in a local `claude -p` run,
-          # though the local CLI never reproduced the action's failure, so only
-          # a real run of this workflow can say whether it helps. Delivered via
-          # the `settings` input (written to ~/.claude/settings.json, whose
+          # CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1 — the Skill grant above was
+          # necessary but not enough (seen in Graftwork/talks, throwaway PR #8):
+          # zero permission denials and still nothing posted. The code-review
+          # plugin starts subagents and waits for them, and this action runs a
+          # single non-interactive turn that can end before background results
+          # return, while the run still reports success. Measured here on the
+          # same code change, from the run transcript's subagent_stats:
+          #   switch off: 7 subagents, 4 started in the background, 3 completed;
+          #     the run's final message was "Still running — I'll wait for the
+          #     completion notifications."; nothing posted.
+          #   switch on: 9 subagents, 0 in the background, all 9 completed;
+          #     permission_denials_count 0; two inline comments posted.
+          # One run each, so the effect is observed, not yet repeated. Delivered
+          # via the `settings` input (written to ~/.claude/settings.json, whose
           # `env` key Claude Code applies to its own process), not a step-level
           # `env:` — the pinned action.yml passes the Claude step an explicit
-          # allowlist of variables and this one is not on it. If a run with
-          # this in place still posts nothing, revert this input and keep the
-          # Skill grant.
-          # CONTROL RUN — switch temporarily off to compare against the run that
-          # had it on. Restore or remove after the control PR has been read.
-          # settings: '{"env": {"CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"}}'
-          # TEMPORARY DIAGNOSTIC — remove after the next review run has been read.
-          # Prints the full Claude transcript into the (publicly visible) run
-          # log, including tool results, which can contain secrets. It exists
-          # only to see why a run that ends success with zero permission
-          # denials still posts nothing.
-          show_full_output: true
+          # allowlist of variables and this one is not on it.
+          #
+          # Also learned: the plugin's first step reads the PR title and body and
+          # can stop early on a PR that describes itself as a throwaway or "do not
+          # merge", and a run that ends in about 30s with nothing posted may be
+          # that, not this bug. Test with a neutral, honest description.
+          settings: '{"env": {"CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"}}'
           # Dependabot PRs only ever touch dependency-pin lines (pyproject.toml, devcontainer
           # feature versions), so they carry no attacker-controlled content; allow the action to
           # run for them rather than failing every dependency-bump PR's review check.
