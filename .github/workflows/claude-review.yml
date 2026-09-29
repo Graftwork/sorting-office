@@ -150,6 +150,12 @@ jobs:
           # this in place still posts nothing, revert this input and keep the
           # Skill grant.
           settings: '{"env": {"CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"}}'
+          # TEMPORARY DIAGNOSTIC — remove after the next review run has been read.
+          # Prints the full Claude transcript into the (publicly visible) run
+          # log, including tool results, which can contain secrets. It exists
+          # only to see why a run that ends success with zero permission
+          # denials still posts nothing.
+          show_full_output: true
           # Dependabot PRs only ever touch dependency-pin lines (pyproject.toml, devcontainer
           # feature versions), so they carry no attacker-controlled content; allow the action to
           # run for them rather than failing every dependency-bump PR's review check.
