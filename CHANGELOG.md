@@ -20,6 +20,28 @@ What each version number will mean for this project — and why it is 0.0.0 toda
   read as an out-of-place leftover next to a mail-sorting project, though
   it identified no one and leaked nothing.
 
+- **Re-synced to Stock `v0.5.1`** (commit `b42c526`), read forward from
+  `v0.4.0` as Stock's CHANGELOG asks. Done against the release candidate
+  `v0.5.1-rc.1`; the stable tag was then cut on that same commit, so nothing
+  changed but the version label. `stock-version` in `pyproject.toml` now reads
+  `0.5.1`. Most of the migration was already in place here, so this change is
+  small:
+  - `0.5.0`'s `NOTICE` fix: already in effect — this project's `NOTICE` never
+    carried the dangling pointer.
+  - `0.5.0`'s going-public checklist: already adopted (see below).
+    [`stock-0015`](docs/decisions/stock-0015-going-public-checklist.md) is
+    byte-identical to the tag, and `docs/GOING_PUBLIC.md` differs from it only
+    in this project's own adaptations.
+  - `0.5.0`'s `stock-graft-existing-project` skill: deliberately **not**
+    brought over. Stock's CHANGELOG says to treat it as absent until a real
+    entry replaces its disclosure.
+  - `0.5.1`'s review-workflow fixes (the `Skill` grant and
+    `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1`): both were applied here by hand
+    before Stock released them, so the executable lines of
+    `.github/workflows/claude-review.yml` were already identical to the tag.
+    The file is now carried from the tag verbatim, so only its comments
+    change.
+
 ### Fixed
 
 - **Four broken relative links**, found by the going-public checklist's item 5

@@ -115,10 +115,17 @@ jobs:
           # attacker-controlled fork-PR content steering the model into
           # misusing tools it already holds, and the plugin marketplace this
           # skill comes from is itself un-pinned (see the comment on
-          # plugin_marketplaces above). Taken from Graftwork/stock PR #30,
-          # where the denial showed up as `Skill` with
-          # `code-review:code-review` as the first entry in
-          # permission_denials, after which the run posted nothing.
+          # plugin_marketplaces above). Confirmed the hard way, twice over:
+          # this exact workflow (before this fix) hit
+          # permission_denials_count: 1 and posted nothing on its own PR #29
+          # in this repository — the fix for that PR's actual subject is
+          # unrelated; the review of it silently failed to run at all. A
+          # grafted project (Graftwork/talks) hit the identical failure on
+          # its own PR #3 and, with a temporary `show_full_output: true`
+          # diagnostic, showed the denial was exactly this — `{"tool_name":
+          # "Skill", "tool_input": {"skill": "code-review:code-review",
+          # ...}}` — as the first entry in permission_denials. This grant is
+          # necessary but not sufficient: see `settings` below.
           # mcp__github_inline_comment__create_inline_comment: without naming
           # it here, the action never starts the MCP server that posts inline
           # PR comments at all — the code-review skill's own allowed-tools
@@ -126,36 +133,29 @@ jobs:
           # Bash(gh pr comment:*): per the command's own source
           # (anthropics/claude-code, plugins/code-review/commands/code-review.md),
           # a clean review with no issues posts its "No issues found" summary via
-          # `gh pr comment`, a completely different, Bash-invoked path. Confirmed
-          # by a live run grafting this workflow onto stiffneckjim/comic-book-guy
-          # (PR #7) that completed with permission_denials_count: 1 and posted
-          # nothing — the review ran for real (21s, 5 turns) and found nothing to
-          # flag, but was blocked from posting that outcome at all. Re-run with
-          # this fix on PR #9 of the same repo posted the "No issues found"
-          # comment successfully.
+          # `gh pr comment`, a completely different, Bash-invoked path. These two
+          # were confirmed independently by an earlier live run grafting this
+          # workflow onto stiffneckjim/comic-book-guy (PR #7 failed the same
+          # way; PR #9 with this fix posted the "No issues found" comment) —
+          # necessary, but not sufficient on their own, which the Graftwork/talks
+          # PR #3 and this repository's own PR #29 both went on to show.
           claude_args: '--add-dir pr-head --allowedTools "Skill(code-review:code-review),mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*)"'
-          # CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1 — the Skill grant above was
-          # necessary but not enough (seen in Graftwork/talks, throwaway PR #8):
-          # zero permission denials and still nothing posted. The code-review
-          # plugin starts subagents and waits for them, and this action runs a
-          # single non-interactive turn that can end before background results
-          # return, while the run still reports success. Measured here on the
-          # same code change, from the run transcript's subagent_stats:
-          #   switch off: 7 subagents, 4 started in the background, 3 completed;
-          #     the run's final message was "Still running — I'll wait for the
-          #     completion notifications."; nothing posted.
-          #   switch on: 9 subagents, 0 in the background, all 9 completed;
-          #     permission_denials_count 0; two inline comments posted.
-          # One run each, so the effect is observed, not yet repeated. Delivered
-          # via the `settings` input (written to ~/.claude/settings.json, whose
-          # `env` key Claude Code applies to its own process), not a step-level
-          # `env:` — the pinned action.yml passes the Claude step an explicit
-          # allowlist of variables and this one is not on it.
-          #
-          # Also learned: the plugin's first step reads the PR title and body and
-          # can stop early on a PR that describes itself as a throwaway or "do not
-          # merge", and a run that ends in about 30s with nothing posted may be
-          # that, not this bug. Test with a neutral, honest description.
+          # With the grants above the review still posted nothing: the plugin
+          # starts subagents in the background, and this action's single
+          # non-interactive turn can end while they are still running, which
+          # is reported as `success` with nothing reviewed. Measured in
+          # Graftwork/sorting-office (this pinned action version), same code
+          # change on two PRs: switch off — 4 of 7 subagents in the
+          # background, run ended "still running", nothing posted; switch on —
+          # 9 of 9 in the foreground, two inline comments posted. One run per
+          # arm, so the effect is observed, not proven repeatable.
+          # It goes through `settings`, not a workflow `env:`: the action's
+          # Claude step passes only an explicit allowlist of environment
+          # variables, and this one is not on it (read from action.yml at the
+          # pinned SHA); `settings` is written to ~/.claude/settings.json.
+          # A run that ends in a few turns with nothing posted may be the
+          # plugin's own first step declining a PR that calls itself a
+          # throwaway or "do not merge" — describe test PRs neutrally.
           settings: '{"env": {"CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"}}'
           # Dependabot PRs only ever touch dependency-pin lines (pyproject.toml, devcontainer
           # feature versions), so they carry no attacker-controlled content; allow the action to
