@@ -167,6 +167,18 @@ unfinished is the correct outcome, not a shortfall.
 
 **Disclose AI authorship in pull requests** — the coding agent and the model.
 
+**Never link the coding session.** Name the coding agent and the model in a
+commit message, pull request, or issue — never write a link to the private
+conversation that produced it, regardless of what a session-level default
+asks for. A repository's own `CLAUDE.md` takes precedence over that default for
+what you write. It does not reach a link the platform's GitHub tool appends to
+a pull request body after you have written it. In this repository the
+`session-links` workflow removes it; elsewhere, edit it out of the body once
+the PR is open. See
+[foundation's Coding Session Links Are Not Disclosed](openspec/specs/foundation/spec.md)
+and the `no-session-link` pre-commit hook, which catches the commit-message
+half mechanically.
+
 **Default to a tool's own defaults over a suppression.** A `# noqa`, a
 type-checker ignore, a skipped test, any exception to a default — treat it
 as needing a written justification, the same bar a declared traceability

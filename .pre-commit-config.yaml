@@ -1,5 +1,9 @@
 # Run with: uvx pre-commit run --all-files
 # Install the git hook with: uvx pre-commit install
+# default_install_hook_types below means that one command wires up both the
+# pre-commit stage (staged files) and the commit-msg stage (the message
+# itself, for no-session-link) -- nothing to remember, no second command.
+default_install_hook_types: [pre-commit, commit-msg]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -37,3 +41,16 @@ repos:
         language: system
         pass_filenames: false
         files: ^(openspec/specs/|tests/)
+
+      # foundation's "Coding Session Links Are Not Disclosed" -- the
+      # mechanical half; see openspec/specs/foundation/spec.md. Runs at the
+      # commit-msg stage, not the default pre-commit stage, because the
+      # commit message isn't a staged file -- it's the argument pre-commit
+      # hands this hook at that stage. See the change's design.md for why a
+      # plain `pre-commit install` still wires this up
+      # (default_install_hook_types above).
+      - id: no-session-link
+        name: commit message contains no coding-session link
+        entry: python scripts/check_no_session_link.py
+        language: system
+        stages: [commit-msg]
