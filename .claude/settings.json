@@ -40,6 +40,9 @@
       "Read(./.env.*)"
     ]
   },
+  "attribution": {
+    "sessionUrl": false
+  },
   "hooks": {
     "SessionStart": [
       {

@@ -17,3 +17,7 @@ uv python install 3.13
 
 # Python dev dependencies (pytest, ruff, coverage) — pinned in uv.lock.
 uv sync
+
+# A fresh clone has no git hooks, so the pre-commit checks would otherwise
+# never run in a cloud session.
+uvx pre-commit install --install-hooks
