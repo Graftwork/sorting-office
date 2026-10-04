@@ -42,6 +42,31 @@ What each version number will mean for this project — and why it is 0.0.0 toda
     The file is now carried from the tag verbatim, so only its comments
     change.
 
+- **Re-synced to Stock `v0.6.0-rc.1`** (commit `3ed5e22`), read forward from
+  `v0.5.1` as Stock's CHANGELOG asks and applied one entry at a time, as three
+  PRs. The stable `v0.6.0` tag does not exist yet, so `stock-version` in
+  `pyproject.toml` now reads `0.6.0-rc.1`; it moves to `0.6.0` when that tag
+  lands on the same commit. Brought over:
+  - **Session-link controls** (#23): `attribution.sessionUrl: false` in
+    `.claude/settings.json`, the `session-links` CI workflow (carried
+    verbatim), `uvx pre-commit install --install-hooks` in the SessionStart
+    hook, and [`stock-0016`](docs/decisions/stock-0016-no-ci-check-on-pushes-to-main.md).
+  - **`foundation`'s "Coding Session Links Are Not Disclosed"** (#24), as the
+    OpenSpec change `session-links-not-disclosed`: the requirement, the
+    `no-session-link` commit-msg hook with `scripts/check_no_session_link.py`
+    and its tests (carried verbatim), `default_install_hook_types`, the
+    `CLAUDE.md` house rule, and a declared gap for what an agent writes in a
+    pull request or issue.
+  - **The review-workflow gate** (#25): `.github/workflows/claude-review.yml`
+    carried verbatim. The check now fails when no review happened, and fails
+    for any pull request that edits that file, which needs an admin to bypass.
+  - Not brought over: Stock's `docs/RELEASING.md` paragraphs about the GitHub
+    Releases page (this project keeps its own `RELEASING.md`, and Stock says
+    nothing depends on them). The draft `stock-graft-existing-project` skill is
+    still absent, as before.
+  - Existing history is untouched: the new controls stop session links being
+    added, they do not remove the ones already committed.
+
 ### Fixed
 
 - **Four broken relative links**, found by the going-public checklist's item 5

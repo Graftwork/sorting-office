@@ -164,7 +164,7 @@ Recorded so the boundaries are deliberate rather than forgotten:
 ## Grafted from Stock
 
 Grafted from [Graftwork Stock](https://github.com/Graftwork/stock) at
-`v0.3.0-rc.1`, currently synced to `v0.5.1`; the version is recorded in
+`v0.3.0-rc.1`, currently synced to `v0.6.0-rc.1`; the version is recorded in
 `pyproject.toml` under `[tool.graftwork]`. To re-sync, read Stock's CHANGELOG
 forward from there and apply each entry as a small PR.
 
