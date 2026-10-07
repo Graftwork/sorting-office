@@ -6,10 +6,11 @@ name: Claude Code Review
 # reviews draw on the existing Claude plan rather than a separate Anthropic API
 # key.
 #
-# `synchronize` (a push to an open PR) is here because the final step of the
-# job is meant to be a *required* check. A required check is matched against
-# the PR's head commit, so without this a PR with a follow-up push would wait
-# for a check that never runs on the new commit. Left alone, a push gets no
+# `synchronize` (a push to an open PR) is here so the result of the final step
+# describes the PR's current head commit, not an older one. The check is
+# advisory, not a required check (maintainer decision, Graftwork/stock#39): a
+# missing review must never look like a review, but nothing waits on this job.
+# Left alone, a push gets no
 # second review: the review plugin stops if Claude has already commented on
 # the pull request (measured on Graftwork/stock#47; #39 finding 11), the run
 # posts nothing, and the gate below goes red. The prompt below therefore tells
@@ -209,14 +210,19 @@ jobs:
       # never executes anything from the pull request.
       #
       # The step fails when: the review bot posted no comment or review since
-      # the run started; `is_error` is true; the PR edits this workflow (the
-      # action skips itself); or a tool the review is meant to use was denied
-      # (`Skill`, the inline-comment tool, `gh pr comment`). Denials of any other
-      # Bash call only warn. Measured on a review that named both planted bugs:
-      # four denied calls, all exploratory (`gh pr diff`, `git ls-tree`, a
-      # `python3` trace), different on every run, one of them executing code.
-      # Failing on those makes every real review red, and granting them one by
-      # one would not converge and would widen the allowlist.
+      # the run started; `is_error` is true; or the PR edits this workflow (the
+      # action skips itself). A denied tool call never fails the step by itself;
+      # denials are listed. If a denial stops the review from posting, the
+      # "posted nothing" rule fails the run and its message lists them. Measured
+      # on a review that named both planted bugs: four denied calls, all
+      # exploratory (`gh pr diff`, `git ls-tree`, a `python3` trace), different
+      # on every run, one of them executing code. Failing on those makes every
+      # real review red, and granting them one by one would not converge and
+      # would widen the allowlist. An earlier version also failed when a tool
+      # the review posts with was denied, by matching the command text for
+      # `gh pr comment`; a pull request whose own test file quoted that phrase
+      # failed it (measured on Graftwork/stock#56). It added nothing, because
+      # a denied posting tool already means nothing was posted.
       #
       # "Nothing to review" is its own explicit outcome, not silence: the prompt
       # asks the review to post a comment beginning with SENTINEL. The gate
@@ -255,7 +261,7 @@ jobs:
           # job green in 7 s). Such a pull request is not reviewed by Claude, so
           # this job must not be green for it.
           if ! cmp -s .github/workflows/claude-review.yml pr-head/.github/workflows/claude-review.yml; then
-            fail "This pull request edits claude-review.yml, so the action skipped itself and nothing was reviewed. Review it by hand; merging it needs a repository admin to bypass this check."
+            fail "This pull request edits claude-review.yml, so the action skipped itself and nothing was reviewed. Review it by hand: this check is advisory, so it does not block the merge, but nothing has reviewed this change."
           fi
 
           if [ -z "${EXECUTION_FILE:-}" ] || [ ! -s "$EXECUTION_FILE" ]; then
@@ -271,10 +277,7 @@ jobs:
           # percent signs are replaced and line breaks collapsed, so the text is
           # safe to print in a workflow command and to hand to the comment job.
           fmt='map("\(.tool_name): \((.tool_input.command // .tool_input.skill // "") | gsub("\\s+"; " ") | gsub("[`%]"; "_") | .[0:100])") | join("; ") | .[0:400]'
-          intended='def intended: .tool_name == "Skill" or .tool_name == "mcp__github_inline_comment__create_inline_comment" or (.tool_name == "Bash" and ((.tool_input.command // "") | test("gh pr comment")));'
           denied=$(jq -r "[.permission_denials[]?] | $fmt" <<<"$result")
-          intended_list=$(jq -r "$intended [.permission_denials[]? | select(intended)] | $fmt" <<<"$result")
-          intended_count=$(jq -r "$intended [.permission_denials[]? | select(intended)] | length" <<<"$result")
           # Set before any failure below, so the comment job still gets it.
           echo "denied=$denied" >> "$GITHUB_OUTPUT"
 
@@ -289,9 +292,6 @@ jobs:
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
-          if [ "$intended_count" != "0" ]; then
-            fail "A tool the review is meant to use was denied: $intended_list. Fix the grant by its exact name after reading why; never a bare grant."
-          fi
           if [ "$is_error" = "true" ]; then
             fail "Claude Code reported is_error: true."
           fi
