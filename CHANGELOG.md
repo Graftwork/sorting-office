@@ -67,6 +67,32 @@ What each version number will mean for this project — and why it is 0.0.0 toda
   - Existing history is untouched: the new controls stop session links being
     added, they do not remove the ones already committed.
 
+- **Re-synced to Stock `v0.7.0-rc.1`** (commit `7fccde9`), read forward from
+  `v0.6.0` as Stock's CHANGELOG asks and applied one entry at a time, as three
+  PRs. The stable `v0.7.0` tag does not exist yet, so `stock-version` in
+  `pyproject.toml` now reads `0.7.0-rc.1`; it moves to `0.7.0` when that tag
+  lands on the same commit. The previous re-sync was recorded as `0.6.0-rc.1`;
+  Stock cut `v0.6.0` on that same commit (`3ed5e22`), so nothing changed but
+  the label. Brought over:
+  - **The review gate** (#27): `.github/workflows/claude-review.yml` carried
+    verbatim. A denied tool call now only warns; the check still fails when no
+    review was posted, when the run errors, and for a pull request that edits
+    the workflow, which is now advisory and needs no bypass. Stock's other
+    change in this entry, making the check not required, has nothing to remove
+    here: this repository has no required checks.
+  - **The `mise` pin** (#28): `version: 2026.9.12` in `ci.yml` in place of
+    `minimum_release_age: 7d`. That version is what this repository's cache
+    held (read from the log of an earlier `check` run). The first run after the
+    change had a cold cache, downloaded that release directly and passed.
+  - **`foundation`'s "A Passing Review Check Means A Review Happened"** (#29),
+    as the OpenSpec change `review-gate-is-a-spec`: the requirement with seven
+    scenarios, and `tests/test_review_gate.py` (carried verbatim) which runs
+    the gate step against a fake `gh` and claims all seven. They need `bash`
+    and `jq`, and fail without them. This project runs Stock's review
+    workflow, so there was nothing to decide about a graft without it.
+  - Not brought over: Stock's changes to `docs/RELEASING.md`, `docs/UAT.md` and
+    `README.md` (this project keeps its own).
+
 ### Fixed
 
 - **Four broken relative links**, found by the going-public checklist's item 5
