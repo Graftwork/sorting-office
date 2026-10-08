@@ -5,9 +5,28 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 What each version number will mean for this project — and why it is 0.0.0 today
 — is set out in [`docs/RELEASING.md`](docs/RELEASING.md).
 
+> **2026-10-08: this repository was rebuilt from rewritten history.** Only
+> commit messages changed, to remove coding-session links; every file in every
+> commit is identical. Pull request and issue numbers, and commit hashes, cited
+> anywhere here before this date refer to the private archive, not to this
+> repository. The record is
+> [ADR 0015](docs/decisions/0015-rebuilt-from-rewritten-history.md).
+
 ## [Unreleased]
 
+### Added
+
+- **[ADR 0015](docs/decisions/0015-rebuilt-from-rewritten-history.md): rebuilt
+  from rewritten history.** Records why this repository was rebuilt, what
+  changed (commit messages only, to remove coding-session links), and that
+  pull request numbers and commit hashes cited before 2026-10-08 refer to the
+  private archive. Follows Stock's own rebuild (Stock ADR 0017).
+
 ### Changed
+
+- **`stock-0015`'s list of then-private repositories no longer names this
+  project's earlier attempt** by its repository name, which stays private.
+  The same one-line change Stock made to its own copy.
 
 - **`WORKFLOW.md`'s "field experience" example swapped from Stock's own
   (about OrcaSlicer, a 3D-printing slicer — inherited verbatim from the
