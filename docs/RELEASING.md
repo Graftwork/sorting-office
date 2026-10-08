@@ -70,9 +70,9 @@ mise run check          # lint + test, everything CI runs
 uvx pre-commit run --all-files
 ```
 
-### 4. Run UAT — case 4 before the *commit*, the rest before the PR
+### 4. Run UAT — case 2 before the *commit*, the rest before the PR
 
-Work [`docs/UAT.md`](UAT.md) and record what you saw. Case 4 — *the artifacts
+Work [`docs/UAT.md`](UAT.md) and record what you saw. Case 2 — *the artifacts
 read clean to a stranger* — is different from the others: it runs before the
 commit, because that is the crossing that matters. Everything after the commit is
 a rewrite rather than an edit.

@@ -63,7 +63,7 @@ None. The `foundation` capability is unchanged.
   marked proposed in [ADR 0005](../../../docs/decisions/0005-n8n-execution-engine.md)
   and to be confirmed by building the first collection duty on it.
 - **Credentials:** postbox credentials live on the mini PC and are reachable only
-  from the tailnet. Which provider they are for is deployment configuration and
+  from the private network. Which provider they are for is deployment configuration and
   is not recorded in this repo.
 - **A rule store on the mini PC**, holding walk rules and Dead Letter Office
   entries. Deliberately not in this repo: the rules name every site signed up to,

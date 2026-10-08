@@ -62,7 +62,7 @@ retention, the admin UI — runs against that local mailbox instead.
 
 | Decision | Where |
 | --- | --- |
-| Runs on the always-on mini PC, Tailscale-only | [ADR 0001](docs/decisions/0001-where-it-runs.md) |
+| Runs on the always-on mini PC, private network only | [ADR 0001](docs/decisions/0001-where-it-runs.md) |
 | Only a low-privilege sweeper touches the postbox | [ADR 0002](docs/decisions/0002-two-tier-sweeper.md) |
 | A real local IMAP mailbox, not a bespoke store | [ADR 0003](docs/decisions/0003-real-local-mailbox.md) |
 | Server-side Sieve filtering ruled out | [ADR 0004](docs/decisions/0004-sieve-ruled-out.md) |
@@ -144,7 +144,7 @@ claiming a scenario that doesn't exist — so the link between what was promised
 and what is actually checked can't quietly rot. A promise no test can keep is
 declared, in writing, with its reason.
 
-[`docs/UAT.md`](docs/UAT.md) holds the checks that need a person. Case 4 — *the
+[`docs/UAT.md`](docs/UAT.md) holds the checks that need a person. Case 2 — *the
 artifacts read clean to a stranger* — is the one that runs before every commit,
 and it is the check this repository exists to institutionalise.
 

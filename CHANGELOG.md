@@ -22,109 +22,6 @@ What each version number will mean for this project — and why it is 0.0.0 toda
   pull request numbers and commit hashes cited before 2026-10-08 refer to the
   private archive. Follows Stock's own rebuild (Stock ADR 0017).
 
-### Changed
-
-- **`stock-0015`'s list of then-private repositories no longer names this
-  project's earlier attempt** by its repository name, which stays private.
-  The same one-line change Stock made to its own copy.
-
-- **`WORKFLOW.md`'s "field experience" example swapped from Stock's own
-  (about OrcaSlicer, a 3D-printing slicer — inherited verbatim from the
-  graft, unrelated to this project's domain) to a real one from this
-  project: [ADR 0005](docs/decisions/0005-n8n-execution-engine.md) assumed
-  Docker, and deploying to the mini PC for real showed Podman was the
-  better fit. Both ADRs stay `proposed` — this doesn't formally accept
-  Podman, since the deployment work isn't merged yet. Found by the
-  going-public checklist's item 5 (stranger read): the original example
-  read as an out-of-place leftover next to a mail-sorting project, though
-  it identified no one and leaked nothing.
-
-- **Re-synced to Stock `v0.5.1`** (commit `b42c526`), read forward from
-  `v0.4.0` as Stock's CHANGELOG asks. Done against the release candidate
-  `v0.5.1-rc.1`; the stable tag was then cut on that same commit, so nothing
-  changed but the version label. `stock-version` in `pyproject.toml` now reads
-  `0.5.1`. Most of the migration was already in place here, so this change is
-  small:
-  - `0.5.0`'s `NOTICE` fix: already in effect — this project's `NOTICE` never
-    carried the dangling pointer.
-  - `0.5.0`'s going-public checklist: already adopted (see below).
-    [`stock-0015`](docs/decisions/stock-0015-going-public-checklist.md) is
-    byte-identical to the tag, and `docs/GOING_PUBLIC.md` differs from it only
-    in this project's own adaptations.
-  - `0.5.0`'s `stock-graft-existing-project` skill: deliberately **not**
-    brought over. Stock's CHANGELOG says to treat it as absent until a real
-    entry replaces its disclosure.
-  - `0.5.1`'s review-workflow fixes (the `Skill` grant and
-    `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1`): both were applied here by hand
-    before Stock released them, so the executable lines of
-    `.github/workflows/claude-review.yml` were already identical to the tag.
-    The file is now carried from the tag verbatim, so only its comments
-    change.
-
-- **Re-synced to Stock `v0.6.0-rc.1`** (commit `3ed5e22`), read forward from
-  `v0.5.1` as Stock's CHANGELOG asks and applied one entry at a time, as three
-  PRs. The stable `v0.6.0` tag does not exist yet, so `stock-version` in
-  `pyproject.toml` now reads `0.6.0-rc.1`; it moves to `0.6.0` when that tag
-  lands on the same commit. Brought over:
-  - **Session-link controls** (#23): `attribution.sessionUrl: false` in
-    `.claude/settings.json`, the `session-links` CI workflow (carried
-    verbatim), `uvx pre-commit install --install-hooks` in the SessionStart
-    hook, and [`stock-0016`](docs/decisions/stock-0016-no-ci-check-on-pushes-to-main.md).
-  - **`foundation`'s "Coding Session Links Are Not Disclosed"** (#24), as the
-    OpenSpec change `session-links-not-disclosed`: the requirement, the
-    `no-session-link` commit-msg hook with `scripts/check_no_session_link.py`
-    and its tests (carried verbatim), `default_install_hook_types`, the
-    `CLAUDE.md` house rule, and a declared gap for what an agent writes in a
-    pull request or issue.
-  - **The review-workflow gate** (#25): `.github/workflows/claude-review.yml`
-    carried verbatim. The check now fails when no review happened, and fails
-    for any pull request that edits that file, which needs an admin to bypass.
-  - Not brought over: Stock's `docs/RELEASING.md` paragraphs about the GitHub
-    Releases page (this project keeps its own `RELEASING.md`, and Stock says
-    nothing depends on them). The draft `stock-graft-existing-project` skill is
-    still absent, as before.
-  - Existing history is untouched: the new controls stop session links being
-    added, they do not remove the ones already committed.
-
-- **Re-synced to Stock `v0.7.0`** (commit `7fccde9`), read forward from
-  `v0.6.0` as Stock's CHANGELOG asks and applied one entry at a time, as three
-  PRs. Done against the release candidate `v0.7.0-rc.1`; Stock then cut the
-  stable tag on that same commit (identical tree), so nothing changed but the
-  label, and `stock-version` in `pyproject.toml` now reads `0.7.0`. The
-  previous re-sync was recorded as `0.6.0-rc.1`; Stock cut `v0.6.0` on that
-  same commit (`3ed5e22`), so likewise only the label. Brought over:
-  - **The review gate** (#27): `.github/workflows/claude-review.yml` carried
-    verbatim. A denied tool call now only warns; the check still fails when no
-    review was posted, when the run errors, and for a pull request that edits
-    the workflow, which is now advisory and needs no bypass. Stock's other
-    change in this entry, making the check not required, has nothing to remove
-    here: this repository has no required checks.
-  - **The `mise` pin** (#28): `version: 2026.9.12` in `ci.yml` in place of
-    `minimum_release_age: 7d`. That version is what this repository's cache
-    held (read from the log of an earlier `check` run). The first run after the
-    change had a cold cache, downloaded that release directly and passed.
-  - **`foundation`'s "A Passing Review Check Means A Review Happened"** (#29),
-    as the OpenSpec change `review-gate-is-a-spec`: the requirement with seven
-    scenarios, and `tests/test_review_gate.py` (carried verbatim) which runs
-    the gate step against a fake `gh` and claims all seven. They need `bash`
-    and `jq`, and fail without them. This project runs Stock's review
-    workflow, so there was nothing to decide about a graft without it.
-  - Not brought over: Stock's changes to `docs/RELEASING.md`, `docs/UAT.md` and
-    `README.md` (this project keeps its own).
-
-### Fixed
-
-- **Four broken relative links**, found by the going-public checklist's item 5
-  (the whole-repository stranger read): `docs/glossary.md` pointed to
-  `decisions/0008-sieve-ruled-out.md` (that ADR is `0004`; `0008` is pruning-
-  moves-to-Trash); `docs/RELEASING.md` linked to `.claude/skills/…` without
-  the `../` needed from inside `docs/`; and two spec files under
-  `openspec/changes/sweeper-and-retention/specs/` referenced
-  `docs/decisions/` with one `../` too few. Found with a small script
-  checking every markdown relative link resolves, not by eye.
-
-### Added
-
 - **[`docs/GOING_PUBLIC.md`](docs/GOING_PUBLIC.md)** and
   [ADR 0014](docs/decisions/0014-going-public-checklist-adopted.md) — a
   once-only checklist for when this repository's visibility actually
@@ -202,6 +99,106 @@ What each version number will mean for this project — and why it is 0.0.0 toda
 
 ### Changed
 
+- **Fixes from the going-public stranger read.** Infrastructure the project
+  happens to run on is now described by its role rather than its product name:
+  ADR 0001, ADR 0012, ADR 0014, the README and the open `sweeper-and-retention`
+  change say "the private network" and "a cloud VM". The stranger-read UAT case
+  is case 2, not case 4, in `README.md`, `docs/UAT.md` and `docs/RELEASING.md`.
+  UAT case 4's expected summary no longer hard-codes a gap count that had gone
+  stale. `WORKFLOW.md` no longer measures a backlog stub this project removed
+  at graft time as if it were here, and its "transcribe learnings forward"
+  example is now about this project rather than 3D printing. This changelog's
+  `[Unreleased]` section has one heading of each kind instead of repeats.
+
+- **`stock-0015`'s list of then-private repositories no longer names this
+  project's earlier attempt** by its repository name, which stays private.
+  The same one-line change Stock made to its own copy.
+
+- **`WORKFLOW.md`'s "field experience" example swapped from Stock's own
+  (about OrcaSlicer, a 3D-printing slicer — inherited verbatim from the
+  graft, unrelated to this project's domain) to a real one from this
+  project: [ADR 0005](docs/decisions/0005-n8n-execution-engine.md) assumed
+  Docker, and deploying to the mini PC for real showed Podman was the
+  better fit. Both ADRs stay `proposed` — this doesn't formally accept
+  Podman, since the deployment work isn't merged yet. Found by the
+  going-public checklist's item 5 (stranger read): the original example
+  read as an out-of-place leftover next to a mail-sorting project, though
+  it identified no one and leaked nothing.
+
+- **Re-synced to Stock `v0.5.1`** (commit `b42c526`), read forward from
+  `v0.4.0` as Stock's CHANGELOG asks. Done against the release candidate
+  `v0.5.1-rc.1`; the stable tag was then cut on that same commit, so nothing
+  changed but the version label. `stock-version` in `pyproject.toml` now reads
+  `0.5.1`. Most of the migration was already in place here, so this change is
+  small:
+  - `0.5.0`'s `NOTICE` fix: already in effect — this project's `NOTICE` never
+    carried the dangling pointer.
+  - `0.5.0`'s going-public checklist: already adopted (see the
+    `docs/GOING_PUBLIC.md` entry under Added).
+    [`stock-0015`](docs/decisions/stock-0015-going-public-checklist.md) is
+    byte-identical to the tag, and `docs/GOING_PUBLIC.md` differs from it only
+    in this project's own adaptations.
+  - `0.5.0`'s `stock-graft-existing-project` skill: deliberately **not**
+    brought over. Stock's CHANGELOG says to treat it as absent until a real
+    entry replaces its disclosure.
+  - `0.5.1`'s review-workflow fixes (the `Skill` grant and
+    `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1`): both were applied here by hand
+    before Stock released them, so the executable lines of
+    `.github/workflows/claude-review.yml` were already identical to the tag.
+    The file is now carried from the tag verbatim, so only its comments
+    change.
+
+- **Re-synced to Stock `v0.6.0-rc.1`** (commit `3ed5e22`), read forward from
+  `v0.5.1` as Stock's CHANGELOG asks and applied one entry at a time, as three
+  PRs. The stable `v0.6.0` tag does not exist yet, so `stock-version` in
+  `pyproject.toml` now reads `0.6.0-rc.1`; it moves to `0.6.0` when that tag
+  lands on the same commit. Brought over:
+  - **Session-link controls** (#23): `attribution.sessionUrl: false` in
+    `.claude/settings.json`, the `session-links` CI workflow (carried
+    verbatim), `uvx pre-commit install --install-hooks` in the SessionStart
+    hook, and [`stock-0016`](docs/decisions/stock-0016-no-ci-check-on-pushes-to-main.md).
+  - **`foundation`'s "Coding Session Links Are Not Disclosed"** (#24), as the
+    OpenSpec change `session-links-not-disclosed`: the requirement, the
+    `no-session-link` commit-msg hook with `scripts/check_no_session_link.py`
+    and its tests (carried verbatim), `default_install_hook_types`, the
+    `CLAUDE.md` house rule, and a declared gap for what an agent writes in a
+    pull request or issue.
+  - **The review-workflow gate** (#25): `.github/workflows/claude-review.yml`
+    carried verbatim. The check now fails when no review happened, and fails
+    for any pull request that edits that file, which needs an admin to bypass.
+  - Not brought over: Stock's `docs/RELEASING.md` paragraphs about the GitHub
+    Releases page (this project keeps its own `RELEASING.md`, and Stock says
+    nothing depends on them). The draft `stock-graft-existing-project` skill is
+    still absent, as before.
+  - Existing history is untouched: the new controls stop session links being
+    added, they do not remove the ones already committed.
+
+- **Re-synced to Stock `v0.7.0`** (commit `7fccde9`), read forward from
+  `v0.6.0` as Stock's CHANGELOG asks and applied one entry at a time, as three
+  PRs. Done against the release candidate `v0.7.0-rc.1`; Stock then cut the
+  stable tag on that same commit (identical tree), so nothing changed but the
+  label, and `stock-version` in `pyproject.toml` now reads `0.7.0`. The
+  previous re-sync was recorded as `0.6.0-rc.1`; Stock cut `v0.6.0` on that
+  same commit (`3ed5e22`), so likewise only the label. Brought over:
+  - **The review gate** (#27): `.github/workflows/claude-review.yml` carried
+    verbatim. A denied tool call now only warns; the check still fails when no
+    review was posted, when the run errors, and for a pull request that edits
+    the workflow, which is now advisory and needs no bypass. Stock's other
+    change in this entry, making the check not required, has nothing to remove
+    here: this repository has no required checks.
+  - **The `mise` pin** (#28): `version: 2026.9.12` in `ci.yml` in place of
+    `minimum_release_age: 7d`. That version is what this repository's cache
+    held (read from the log of an earlier `check` run). The first run after the
+    change had a cold cache, downloaded that release directly and passed.
+  - **`foundation`'s "A Passing Review Check Means A Review Happened"** (#29),
+    as the OpenSpec change `review-gate-is-a-spec`: the requirement with seven
+    scenarios, and `tests/test_review_gate.py` (carried verbatim) which runs
+    the gate step against a fake `gh` and claims all seven. They need `bash`
+    and `jq`, and fail without them. This project runs Stock's review
+    workflow, so there was nothing to decide about a graft without it.
+  - Not brought over: Stock's changes to `docs/RELEASING.md`, `docs/UAT.md` and
+    `README.md` (this project keeps its own).
+
 - **`stock-version` corrected from `0.3.0-rc.2` to `0.3.0`.** Stock cut the
   stable tag one commit after the candidate this project was already
   synced to — a single-file diff, internal to Stock's own UAT record, that
@@ -222,8 +219,6 @@ What each version number will mean for this project — and why it is 0.0.0 toda
 - `docs/UAT.md` and `docs/RELEASING.md` rewritten for this project, replacing
   Stock's own cases and release sequence while keeping both formats.
 
-### Changed
-
 - **Re-synced to Stock `v0.3.0-rc.2`.** Stock's own fix for exactly the bug
   this project found by hand during the original graft: the graft steps said
   nothing about `openspec/changes/`, so Stock's backlog stubs and archived
@@ -239,9 +234,20 @@ What each version number will mean for this project — and why it is 0.0.0 toda
   own release process. First real use of
   [the resync-in-flight-graft skill](.claude/skills/stock-resync-in-flight-graft/SKILL.md)
   (renamed with the `stock-` prefix when Stock brought it back into its own
-  foundation — see the `[Unreleased]` entry below),
+  foundation — see the Stock `v0.4.0` re-sync entry under Added),
   written from doing this once so the next Stock update doesn't start from
   nothing.
+
+### Fixed
+
+- **Four broken relative links**, found by the going-public checklist's item 5
+  (the whole-repository stranger read): `docs/glossary.md` pointed to
+  `decisions/0008-sieve-ruled-out.md` (that ADR is `0004`; `0008` is pruning-
+  moves-to-Trash); `docs/RELEASING.md` linked to `.claude/skills/…` without
+  the `../` needed from inside `docs/`; and two spec files under
+  `openspec/changes/sweeper-and-retention/specs/` referenced
+  `docs/decisions/` with one `../` too few. Found with a small script
+  checking every markdown relative link resolves, not by eye.
 
 ### Notes
 

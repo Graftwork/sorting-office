@@ -75,7 +75,7 @@ Checklist items 1–4, run 2026-09-15:
    `Graftwork/stock` (public), or upstream open-source tooling (`jdx/mise`,
    `astral-sh`). No dead links.
 4. **Stale conditional wording sweep** — every `private`/`internal` hit is
-   about the mini PC's Tailscale-only network model (genuinely still true;
+   about the mini PC's private-network-only model (genuinely still true;
    only the repository's visibility is changing, not the postbox's) or is
    Stock's own historical text, not a stale claim about this repository.
 

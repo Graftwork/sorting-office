@@ -12,8 +12,8 @@ This document covers what those leave open: how the pieces fit, where state
 lives, and how to get from nothing to a pipeline that can be trusted to delete
 mail unattended.
 
-Current state is a grafted foundation with no pipeline code. Nothing is running
-on the mini PC yet beyond pi-hole.
+Current state is a grafted foundation with no pipeline code. Nothing for this
+project is running on the mini PC yet.
 
 The binding constraint is that mail loss is the only failure without a cheap
 undo. Everything below is shaped around making an irreversible delete hard to
@@ -136,7 +136,7 @@ genuinely provisional — if n8n proves awkward, the logic moves without a rewri
   it is now a deployment problem rather than an architectural one
   ([ADR 0009](../../../docs/decisions/0009-provider-agnostic-collection.md)).
 - **The mini PC now holds unencrypted mail.** → Accepted consequence of
-  [ADR 0002](../../../docs/decisions/0002-two-tier-sweeper.md). Tailnet-only
+  [ADR 0002](../../../docs/decisions/0002-two-tier-sweeper.md). Private-network-only
   access, no internet exposure, no SMTP, no MX.
 - **Mixed-purpose addresses get the wrong retention.** → Known and deliberately
   deferred. The conservative fallback means the wrong answer is "kept too long",

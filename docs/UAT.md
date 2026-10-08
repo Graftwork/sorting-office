@@ -9,7 +9,7 @@ stale while the suite stays green.
 The archive is one-way, and a PR is the wrong place to discover the concept was
 wrong. See [Ways of working](../WORKFLOW.md#uat-is-a-gate-and-it-comes-before-the-pr).
 
-**Case 4 is the exception and runs before the *commit*.** Everything after the
+**Case 2 is the exception and runs before the *commit*.** Everything after the
 commit is a rewrite rather than an edit, so a check that runs later is worth
 nothing. This project exists in its current form because that check did not exist
 the first time round.
@@ -118,9 +118,10 @@ where the judgement lives.
 
 - **Command:** `mise run trace`, then read `[tool.graftwork.traceability]` in
   `pyproject.toml`.
-- **Expect:** the summary line accounts for the gaps (`…, 3 allowed without
-  one`), and every declared reason still holds today. A reason that has quietly
-  stopped being true is exactly what this case exists to catch.
+- **Expect:** the summary line accounts for the gaps (`…, N allowed without
+  one`, where N is the number declared in `pyproject.toml`), and every declared
+  reason still holds today. A reason that has quietly stopped being true is
+  exactly what this case exists to catch.
 - **Last agent run:** 2026-08-17 — `34/37 scenarios claimed by tests, 3 allowed
   without one`. `walks` and `retention` now claim 25 scenarios between them; the
   three gaps are still the ones inherited from Stock, unexamined by this
