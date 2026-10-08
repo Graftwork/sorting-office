@@ -21,7 +21,7 @@ anticipated in advance:
   claimed — found only when `sorting-office`'s own real re-sync wrote its own
   `NOTICE` and declined to copy the dangling reference forward.
 - Six references across `CHANGELOG.md`, ADRs, and a skill file pointed at
-  `Graftwork/sorting-office`, `Graftwork/sorting-office-retired`, and
+  `Graftwork/sorting-office`, an earlier attempt at it, and
   `stiffneckjim/comic-book-guy` — all still private at the time this
   repository went public, meaning every one of those links would 404 for a
   visitor who clicked through.
