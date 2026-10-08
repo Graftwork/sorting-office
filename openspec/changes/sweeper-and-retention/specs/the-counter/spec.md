@@ -52,7 +52,7 @@ several waiting addresses in one sitting.
 - **WHEN** the Dead Letter Office is opened at the Counter
 - **THEN** the untriaged addresses and their waiting message counts are listed
 
-### Requirement: The Counter is reachable only from the tailnet
+### Requirement: The Counter is reachable only from the private network
 
 The Counter is an interface onto unencrypted mail. It SHALL NOT be exposed to
 the public internet.

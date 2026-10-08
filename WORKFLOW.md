@@ -95,7 +95,8 @@ convention is a change with a `proposal.md` and nothing else.
 
 **The cost, stated plainly: `openspec validate` will call it invalid for as long
 as it stays a stub.** There is no "intentionally incomplete" state — validation is
-binary. Measured against the stub in this repo:
+binary. Measured in Stock, against a stub this project removed when it was
+grafted:
 
 ```
 $ openspec validate version-string-consistency          # exit 1
@@ -127,9 +128,9 @@ will silently lose your reasoning unless you carry it by hand.**
 So when you abandon or supersede a change, copy the *why* into its replacement,
 in the imperative, addressed to whoever tries next:
 
-> Do not attempt a straightforward box-subtraction implementation again without
-> first working out how to keep the mating profile intact — that is precisely
-> what went wrong last time.
+> Do not reach for server-side Sieve expiry again without first working out how
+> the rules keep up with every new address — that is precisely what ruled it out
+> last time.
 
 A paragraph like that is worth more than the branch you deleted.
 

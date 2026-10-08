@@ -22,7 +22,7 @@ tested with no mailbox, no mail account and no mini PC.
 
 - [ ] 1.1 Run whatever the postbox needs for IMAP headless as a systemd service; confirm it survives a reboot
 - [ ] 1.2 Stand up Dovecot locally, IMAP only — no SMTP receiving, no MX, no internet exposure
-- [ ] 1.3 Confirm both are reachable over the tailnet and not from anywhere else
+- [ ] 1.3 Confirm both are reachable over the private network and not from anywhere else
 - [ ] 1.4 Stand up n8n in Docker and confirm it can reach both mailboxes
 - [ ] 1.5 Write down how to rebuild all of the above, so the mini PC is not a single point of knowledge
 
@@ -96,7 +96,7 @@ carrying a plan out.
 - [ ] 7.3 Create, edit and remove walks and their address rules
 - [ ] 7.4 Refuse a rule that conflicts with an existing one, with an explanation
 - [ ] 7.5 Triage the Dead Letter Office in a batch
-- [ ] 7.6 Serve on the tailnet only
+- [ ] 7.6 Serve on the private network only
 - [ ] 7.7 Tests claiming the scenarios in `specs/the-counter/`
 
 ## 8. Letting it prune

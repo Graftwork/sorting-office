@@ -46,9 +46,9 @@ this one carries credentials rather than just a well-known protocol server.
 - The one-time interactive pairing runs by execing directly into the running
   container. The credential store is a mounted volume, so a container restart
   doesn't repeat it.
-- The container's IMAP/SMTP listener is bound only to the loopback or tailnet
+- The container's IMAP/SMTP listener is bound only to the loopback or private-network
   address the sweeper actually reaches it on — never `0.0.0.0` — so this stays
-  inside ADR 0001's Tailscale-only boundary rather than quietly widening it.
+  inside ADR 0001's private-network-only boundary rather than quietly widening it.
 
 Marked **proposed**, not accepted, the same way ADR 0005 marks n8n: nothing is
 built yet. This should be confirmed by actually standing the container up and
