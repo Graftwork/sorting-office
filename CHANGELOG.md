@@ -16,6 +16,14 @@ What each version number will mean for this project — and why it is 0.0.0 toda
 
 ### Added
 
+- **[ADR 0016](docs/decisions/0016-going-public-record.md): going public.**
+  Closes the going-public checklist and records the choices in the `main`
+  ruleset so they are not mistaken for drift: three required checks (`check`,
+  `Session link - commits`, `Session link - description`), `review` left
+  advisory, squash only, no bypass. Also records that a pull request
+  description keeps a session link in its edit history after the link is
+  edited out, which is why the owner opens pull requests.
+
 - **[ADR 0015](docs/decisions/0015-rebuilt-from-rewritten-history.md): rebuilt
   from rewritten history.** Records why this repository was rebuilt, what
   changed (commit messages only, to remove coding-session links), and that
