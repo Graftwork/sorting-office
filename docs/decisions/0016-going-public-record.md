@@ -34,10 +34,10 @@ n8n). The upstream mail provider stays unnamed
 it imposes are described in full: the point is discretion about what a name
 implies, not secrecy about the design.
 
-**Items 6 and 7** were done by the owner: the repository was made public, then
-a ruleset named `sorting-office main` was created on the default branch. It
-needed the repository to be public first (the checklist's own reasoning in
-item 7). Its shape is deliberate:
+**Items 6 and 7** were done by the owner: the repository was made public on
+2026-10-08, then a ruleset named `sorting-office main` was created on the
+default branch the same day. It needed the repository to be public first (the
+checklist's own reasoning in item 7). Its shape is deliberate:
 
 - **No deletion and no force push** of the default branch.
 - **A pull request is required, with squash as the only merge method.** Zero
@@ -89,8 +89,9 @@ item 7). Its shape is deliberate:
 - **Require an approving review.** Rejected: with one maintainer it would need
   a second account whose only job is to click approve.
 
-Numbers above came from real output: `GET /rulesets/24747810` and
-`/rules/branches/main` for the ruleset, the job log of the first `check` run on
+Numbers above came from real output: the repository's public events feed for
+the date it went public (a `PublicEvent` stamped 2026-10-08 18:15 UTC),
+`GET /rulesets/24747810` and `/rules/branches/main` for the ruleset, the job log of the first `check` run on
 `main` after the secret existed for the coverage upload, and the throwaway pull
 request's merge state. That the owner could not bypass is the owner's report
 from the merge box, not something measured here.
